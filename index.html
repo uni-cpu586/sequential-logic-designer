@@ -9,15 +9,23 @@
 <body>
 
   <header>
-    <div>
+    <div style="display: flex; align-items: center; gap: 0.5rem;">
+      <span style="font-size: 1.2rem;">⚙️</span>
       <h1>Sequential Circuit Design Automation System</h1>
     </div>
-    <div class="subtitle">邏輯設計期末專題</div>
+    <div style="display: flex; align-items: center; gap: 1rem;">
+      <div class="subtitle">邏輯設計期末專題</div>
+      <div class="window-controls">
+        <span class="win-btn min"></span>
+        <span class="win-btn max"></span>
+        <span class="win-btn close"></span>
+      </div>
+    </div>
   </header>
 
   <main>
     <!-- 第一欄：設定與狀態表輸入 -->
-    <section class="panel">
+    <section class="panel panel-red">
       <div class="panel-title">1. 電路設定</div>
       
       <div class="form-group">
@@ -95,7 +103,7 @@
     </section>
 
     <!-- 第二欄：化簡方程式與卡諾圖 -->
-    <section class="panel">
+    <section class="panel panel-blue">
       <div class="panel-title">3. 卡諾圖與方程式化簡</div>
       
       <!-- 方程式分頁切換 -->
@@ -131,7 +139,7 @@
     </section>
 
     <!-- 第三欄：電路圖畫布 -->
-    <section class="panel" style="grid-column: span 1;">
+    <section class="panel panel-green" style="grid-column: span 1;">
       <div class="panel-title">
         <span>4. 動態邏輯電路圖</span>
         <div class="circuit-toolbar">

@@ -1,25 +1,25 @@
 /* 
- * 序向電路自動化設計系統 - 現代美學樣式表
+ * Sequential Circuit Design Automation System - Light Desktop Window Theme
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
 
 :root {
-  --bg-primary: #0b0f19;
-  --bg-surface: rgba(17, 24, 39, 0.7);
-  --border-color: rgba(255, 255, 255, 0.08);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
+  --bg-primary: #f1f5f9; /* 淺灰底色 */
+  --bg-surface: #ffffff; /* 純白卡片 */
+  --border-color: #cbd5e1; /* 邊框線條 */
+  --text-primary: #0f172a; /* 深色文字 */
+  --text-secondary: #475569; /* 次要文字 */
   
   --accent-blue: #3b82f6;
   --accent-purple: #8b5cf6;
   --accent-green: #10b981;
-  --accent-red: #f43f5e;
+  --accent-red: #ef4444;
   --accent-yellow: #f59e0b;
 
-  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
-  --border-radius: 16px;
-  --transition-speed: 0.25s;
+  --shadow-glow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  --border-radius: 8px;
+  --transition-speed: 0.2s;
 }
 
 * {
@@ -36,56 +36,66 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
-  background-image: 
-    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
 }
 
-/* 頂部導覽列 */
+/* 視窗標題列 (仿照 Windows/Mac 桌面視窗) */
 header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.25rem 2.5rem;
-  border-bottom: 1px solid var(--border-color);
-  backdrop-filter: blur(12px);
-  background-color: rgba(11, 15, 25, 0.8);
+  padding: 0.65rem 1.5rem;
+  background-color: #1e293b; /* 深色標題列 */
+  color: #ffffff;
+  border-bottom: 1px solid #0f172a;
   position: sticky;
   top: 0;
   z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #f8fafc;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-}
-
-header h1::before {
-  content: '⚙️';
-  font-size: 1.4rem;
 }
 
 .subtitle {
-  font-size: 0.85rem;
-  color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  border: 1px solid var(--border-color);
+  font-size: 0.8rem;
+  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.15rem 0.6rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* 視窗控制按鈕 */
+.window-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-left: 0.5rem;
+}
+
+.win-btn {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.win-btn.close { background-color: #ef4444; }
+.win-btn.max { background-color: #f59e0b; }
+.win-btn.min { background-color: #10b981; }
 
 /* 主要佈局 */
 main {
   display: grid;
   grid-template-columns: 320px 350px 1fr;
-  gap: 1.5rem;
-  padding: 1.5rem 2.5rem;
+  gap: 1.25rem;
+  padding: 1.25rem;
   flex: 1;
   max-width: 1800px;
   margin: 0 auto;
@@ -99,43 +109,54 @@ main {
   }
 }
 
-/* 卡片容器 (Glassmorphism) */
+/* 卡片容器 (無毛玻璃，改為俐落的白底彩色外框) */
 .panel {
   background: var(--bg-surface);
-  border: 1px solid var(--border-color);
+  border: 1.5px solid var(--border-color);
   border-radius: var(--border-radius);
-  padding: 1.5rem;
-  backdrop-filter: blur(16px);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-glow);
+  transition: transform var(--transition-speed);
 }
 
-.panel:hover {
-  border-color: rgba(255, 255, 255, 0.12);
+/* 特殊外框色（對應投影幕風格） */
+.panel.panel-red {
+  border: 2px solid var(--accent-red);
+}
+
+.panel.panel-blue {
+  border: 2px solid var(--accent-blue);
+}
+
+.panel.panel-green {
+  border: 2px solid var(--accent-green);
 }
 
 .panel-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  color: var(--text-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 /* 控制表單樣式 */
 .form-group {
-  margin-bottom: 1.25rem;
+  margin-bottom: 1rem;
 }
 
 .form-group label {
   display: block;
-  font-size: 0.85rem;
-  font-weight: 500;
+  font-size: 0.8rem;
+  font-weight: 600;
   color: var(--text-secondary);
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.4rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -144,22 +165,22 @@ main {
 .radio-group {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.5rem;
-  background: rgba(0, 0, 0, 0.2);
-  padding: 0.25rem;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
+  gap: 4px;
+  background: #f1f5f9;
+  padding: 3px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
 }
 
 .radio-group label {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0.6rem;
-  border-radius: 8px;
+  padding: 0.45rem;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
+  font-size: 0.85rem;
+  font-weight: 600;
   color: var(--text-secondary);
   transition: all var(--transition-speed) ease;
   margin-bottom: 0;
@@ -170,58 +191,58 @@ main {
 }
 
 .radio-group input[type="radio"]:checked + span {
-  color: var(--text-primary);
+  color: #ffffff;
 }
 
 .radio-group label:has(input[type="radio"]:checked) {
-  background: var(--accent-blue);
-  color: var(--text-primary);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  background: #334155; /* 深灰藍選中底色 */
+  color: #ffffff;
 }
 
 /* 狀態表設計 */
 .state-table-container {
   overflow-x: auto;
-  margin-top: 1rem;
+  margin-top: 0.75rem;
   max-height: 380px;
   overflow-y: auto;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
 }
 
 table {
   width: 100%;
   border-collapse: collapse;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 th, td {
-  padding: 0.65rem 0.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 0.4rem;
+  border-bottom: 1px solid #e2e8f0;
 }
 
 th {
-  background: rgba(0, 0, 0, 0.3);
-  font-weight: 600;
+  background: #f1f5f9;
+  font-weight: 700;
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   text-transform: uppercase;
+  border-bottom: 1.5px solid #cbd5e1;
 }
 
 tr:hover td {
-  background: rgba(255, 255, 255, 0.02);
+  background: #f8fafc;
 }
 
 select, input[type="text"] {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid var(--border-color);
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
   color: var(--text-primary);
-  padding: 0.4rem;
-  border-radius: 6px;
+  padding: 0.35rem;
+  border-radius: 4px;
   text-align: center;
   font-family: 'Fira Code', monospace;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   width: 100%;
   outline: none;
   transition: border-color var(--transition-speed);
@@ -235,47 +256,47 @@ select:focus, input[type="text"]:focus {
 .btn-group {
   display: flex;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: 0.75rem;
 }
 
 button {
   flex: 1;
-  padding: 0.65rem 1rem;
-  border-radius: 8px;
+  padding: 0.55rem 0.75rem;
+  border-radius: 6px;
   font-weight: 600;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   cursor: pointer;
   transition: all var(--transition-speed) ease;
-  border: 1px solid var(--border-color);
+  border: 1px solid #cbd5e1;
   font-family: inherit;
 }
 
 .btn-primary {
-  background: var(--accent-blue);
+  background: #334155;
   color: white;
   border: none;
 }
 
 .btn-primary:hover {
-  background: #2563eb;
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+  background: #1e293b;
 }
 
 .btn-secondary {
-  background: rgba(255, 255, 255, 0.05);
+  background: #ffffff;
   color: var(--text-primary);
 }
 
 .btn-secondary:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #f1f5f9;
 }
 
 /* 方程式顯示 */
 .equation-card {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 10px;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.75rem;
+  background: #f8fafc;
+  border-radius: 6px;
+  padding: 0.6rem 0.8rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #e2e8f0;
   border-left: 4px solid var(--accent-blue);
   display: flex;
   justify-content: space-between;
@@ -284,15 +305,16 @@ button {
 
 .eq-label {
   font-family: 'Fira Code', monospace;
-  font-weight: bold;
-  font-size: 0.95rem;
+  font-weight: 700;
+  font-size: 0.9rem;
   color: var(--accent-blue);
 }
 
 .eq-expr {
   font-family: 'Fira Code', monospace;
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 /* 卡諾圖樣式 (K-Map Grid) */
@@ -300,16 +322,16 @@ button {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
-  margin: 1rem 0;
-  background: rgba(0,0,0,0.15);
-  padding: 8px;
-  border-radius: 8px;
-  border: 1px solid rgba(255,255,255,0.05);
+  margin: 0.75rem 0;
+  background: #f1f5f9;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
 }
 
 .kmap-cell {
-  background: rgba(17, 24, 39, 0.6);
-  border: 1px solid rgba(255,255,255,0.04);
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   aspect-ratio: 1;
   display: flex;
   flex-direction: column;
@@ -321,52 +343,54 @@ button {
 
 .kmap-cell-val {
   font-family: 'Fira Code', monospace;
-  font-size: 1.1rem;
-  font-weight: bold;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
 }
 
 .kmap-cell-idx {
-  font-size: 0.65rem;
-  color: var(--text-secondary);
+  font-size: 0.6rem;
+  color: #94a3b8;
   position: absolute;
-  bottom: 2px;
-  right: 4px;
+  bottom: 1px;
+  right: 3px;
 }
 
 /* 電路圖控制 */
 .circuit-toolbar {
   display: flex;
-  gap: 0.5rem;
+  gap: 4px;
   justify-content: flex-end;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .btn-tool {
   flex: none;
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  background: #f1f5f9;
   color: var(--text-secondary);
-  font-size: 1rem;
+  border: 1px solid #cbd5e1;
+  font-size: 0.85rem;
 }
 
 .btn-tool:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: #e2e8f0;
   color: var(--text-primary);
 }
 
-/* SVG 畫布區域 */
+/* SVG 畫布區域 (改為經典白底線稿圖風格) */
 .circuit-canvas-container {
   width: 100%;
   height: 520px;
-  background: rgba(0, 0, 0, 0.35);
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
+  background: #ffffff; /* 純白背景 */
+  border-radius: 6px;
+  border: 1.5px solid #cbd5e1;
   position: relative;
   overflow: hidden;
 }
@@ -375,60 +399,160 @@ svg {
   width: 100%;
   height: 100%;
   cursor: grab;
+  background-color: #ffffff;
 }
 
 svg:active {
   cursor: grabbing;
 }
 
-/* SVG 電路圖微觀互動樣式 */
+/* --- SVG 電路教科書線稿風格強制覆寫 --- */
+
+/* 1. 垂直軌道導線與標籤 */
+.bus-rails line {
+  stroke: #94a3b8 !important; /* 灰黑軌道線 */
+  stroke-width: 1.2px !important;
+}
+
+.bus-rails text {
+  fill: #0f172a !important; /* 純黑軌道文字 */
+  font-weight: 700 !important;
+}
+
+.bus-rails path,
+.bus-rails circle {
+  stroke: #0f172a !important;
+  fill: #ffffff !important;
+  stroke-width: 1.5px !important;
+}
+
+.bus-rails circle {
+  fill: #0f172a !important;
+}
+
+/* 2. 正反器框本體與文字 */
+.flip-flops rect {
+  fill: #ffffff !important; /* 白色填充 */
+  stroke: #0f172a !important; /* 純黑外框 */
+  stroke-width: 1.5px !important;
+  filter: none !important; /* 移除發光陰影 */
+}
+
+.flip-flops text {
+  fill: #0f172a !important;
+  font-weight: 600 !important;
+}
+
+.flip-flops polygon {
+  stroke: #0f172a !important;
+  stroke-width: 1.5px !important;
+}
+
+/* 3. 時脈 (CLK) 信號線 */
+.clock-wires line,
+.clock-wires path {
+  stroke: #475569 !important; /* 灰黑時脈線 */
+  stroke-width: 1.5px !important;
+}
+
+.clock-wires text {
+  fill: #475569 !important;
+  font-weight: bold !important;
+}
+
+/* 4. 邏輯閘 (AND, OR, NOT, XOR) */
 .logic-gate {
-  transition: filter var(--transition-speed), stroke var(--transition-speed);
+  fill: #ffffff !important; /* 白色填充 */
+  stroke: #0f172a !important; /* 純黑外框 */
+  stroke-width: 1.5px !important;
+  transition: stroke var(--transition-speed), filter var(--transition-speed);
+}
+
+/* 邏輯閘內部的 & 或 ≥1 文字 */
+#circuit-gates text {
+  fill: #475569 !important;
+  font-weight: 700 !important;
+}
+
+/* 5. 電路連接線與點 */
+#circuit-wires path,
+#circuit-wires line,
+.feedback-loops path {
+  stroke: #0f172a !important; /* 預設純黑連接線 */
+  stroke-width: 1.5px !important;
+  fill: none !important;
+}
+
+/* 導線交叉點的圓點 */
+#circuit-wires circle,
+.feedback-loops circle,
+.bus-rails circle {
+  fill: #0f172a !important; /* 純黑圓點 */
+  r: 3px !important;
+}
+
+/* 6. 輸出信號 Z */
+#circuit-wires path[stroke="#f43f5e"] {
+  stroke: #0f172a !important; /* 輸出線也保持黑色 */
+}
+
+#circuit-wires circle[fill="#f43f5e"] {
+  fill: #0f172a !important;
+}
+
+#circuit-wires text[fill="#f43f5e"] {
+  fill: #0f172a !important;
+  font-weight: 700 !important;
+}
+
+/* --- 微觀滑鼠懸停高亮互動 (讓教科書風格也有動態靈魂) --- */
+.logic-gate:hover {
+  stroke: var(--accent-blue) !important;
+  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
   cursor: pointer;
 }
 
-.logic-gate:hover {
-  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));
-  stroke: #60a5fa;
-}
-
-.logic-gate[data-equation="Z"]:hover {
-  filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.6));
-  stroke: #fb7185;
+#circuit-wires path:hover,
+.feedback-loops path:hover {
+  stroke: var(--accent-blue) !important;
+  stroke-width: 2px !important;
+  cursor: pointer;
 }
 
 /* 頁尾 */
 footer {
   text-align: center;
-  padding: 1.5rem;
+  padding: 1.25rem;
   border-top: 1px solid var(--border-color);
   color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   margin-top: auto;
+  background: #ffffff;
 }
 
-/* 左右切換的 Tab 按鈕 (用於中欄 K-Map 方程式顯示切換) */
+/* Tab 按鈕 */
 .tab-group {
   display: flex;
-  background: rgba(0, 0, 0, 0.2);
+  background: #f1f5f9;
   padding: 2px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color);
-  margin-bottom: 1rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  margin-bottom: 0.75rem;
 }
 
 .tab-btn {
   flex: 1;
-  padding: 0.4rem;
-  border-radius: 6px;
+  padding: 0.35rem;
+  border-radius: 4px;
   background: transparent;
   border: none;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   color: var(--text-secondary);
+  font-weight: 600;
 }
 
 .tab-btn.active {
-  background: rgba(255, 255, 255, 0.08);
+  background: #ffffff;
   color: var(--text-primary);
-  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }

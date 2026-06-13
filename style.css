@@ -556,3 +556,98 @@ footer {
   color: var(--text-primary);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
+
+/* --- 動態訊號流動畫 --- */
+@keyframes flow {
+  to {
+    stroke-dashoffset: -20;
+  }
+}
+
+/* 懸停導線時的流動特效 */
+#circuit-wires path:hover,
+#circuit-wires line:hover,
+.feedback-loops path:hover,
+.clock-wires path:hover,
+.clock-wires line:hover {
+  stroke: var(--accent-blue) !important;
+  stroke-width: 2.2px !important;
+  stroke-dasharray: 6 4;
+  animation: flow 1s linear infinite;
+  cursor: pointer;
+}
+
+/* --- 元件點擊詳情懸浮窗 --- */
+.circuit-tooltip {
+  position: absolute;
+  background: rgba(15, 23, 42, 0.95);
+  color: #f8fafc;
+  border: 1.5px solid var(--accent-blue);
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.25);
+  max-width: 260px;
+  pointer-events: none;
+  font-family: inherit;
+  line-height: 1.4;
+  animation: fadeIn 0.15s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.tooltip-title {
+  font-weight: 700;
+  color: #60a5fa;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.82rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tooltip-desc {
+  color: #94a3b8;
+  margin-bottom: 0.4rem;
+  font-size: 0.72rem;
+}
+
+.tooltip-eq {
+  font-family: 'Fira Code', monospace;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #38bdf8;
+  margin-bottom: 0.5rem;
+  word-break: break-all;
+}
+
+.tooltip-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 0.4rem;
+  font-size: 0.7rem;
+}
+
+.tooltip-table th, 
+.tooltip-table td {
+  padding: 3px 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  text-align: center;
+}
+
+.tooltip-table th {
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+  font-weight: 600;
+}
+
+.tooltip-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}

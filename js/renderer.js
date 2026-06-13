@@ -134,7 +134,9 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
     d: `M ${notXPrime - 15} ${notY - 8} L ${notXPrime - 5} ${notY} L ${notXPrime - 15} ${notY + 8} Z`,
     fill: "none",
     stroke: "#3b82f6",
-    "stroke-width": "2"
+    "stroke-width": "2",
+    "data-type": "NOT",
+    class: "logic-gate"
   });
   railGroup.appendChild(notGate);
 
@@ -474,6 +476,7 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
           stroke: "#3b82f6",
           "stroke-width": "2",
           "data-equation": eqName,
+          "data-type": "AND",
           class: "logic-gate"
         });
         gatesGroup.appendChild(andGate);
@@ -556,6 +559,7 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
         stroke: "#8b5cf6",
         "stroke-width": "2",
         "data-equation": eqName,
+        "data-type": "OR",
         class: "logic-gate"
       });
       gatesGroup.appendChild(orGate);

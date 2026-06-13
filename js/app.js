@@ -451,3 +451,160 @@ loadExample();
 updateTabsList();
 renderStateTable();
 updateSolverAndCircuit();
+
+// --- 懸浮窗 (Tooltip) 處理邏輯 ---
+
+const tooltip = document.getElementById("circuit-tooltip");
+
+function showTooltip(e, contentHtml) {
+  const container = document.querySelector(".circuit-canvas-container");
+  const rect = container.getBoundingClientRect();
+  
+  // 計算相對於容器的座標
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  
+  tooltip.innerHTML = contentHtml;
+  tooltip.style.left = `${x + 15}px`;
+  tooltip.style.top = `${y + 15}px`;
+  tooltip.style.display = "block";
+}
+
+function showGateTooltip(e, type, eqName) {
+  let title = "";
+  let desc = "";
+  let tableHtml = "";
+
+  if (type === "AND") {
+    title = "AND Gate (及閘)";
+    desc = `此及閘對應激勵方程式中的乘積項。當所有輸入均為 1 時輸出為 1。`;
+    tableHtml = `
+      <table class="tooltip-table">
+        <tr><th>In 1</th><th>In 2</th><th>Out</th></tr>
+        <tr><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>1</td><td>0</td></tr>
+        <tr><td>1</td><td>0</td><td>0</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td></tr>
+      </table>
+    `;
+  } else if (type === "OR") {
+    title = "OR Gate (或閘)";
+    desc = `此或閘對應激勵方程式中的總和。當任意輸入為 1 時輸出為 1。`;
+    tableHtml = `
+      <table class="tooltip-table">
+        <tr><th>In 1</th><th>In 2</th><th>Out</th></tr>
+        <tr><td>0</td><td>0</td><td>0</td></tr>
+        <tr><td>0</td><td>1</td><td>1</td></tr>
+        <tr><td>1</td><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>1</td><td>1</td></tr>
+      </table>
+    `;
+  } else if (type === "NOT") {
+    title = "NOT Gate (反相器)";
+    desc = `將輸入訊號進行反相處理。例如將 X 轉為 X'。`;
+    tableHtml = `
+      <table class="tooltip-table">
+        <tr><th>In</th><th>Out</th></tr>
+        <tr><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>0</td></tr>
+      </table>
+    `;
+  }
+
+  const eqText = eqName ? `<div class="tooltip-eq">${eqName} 的邏輯閘</div>` : "";
+
+  const content = `
+    <div class="tooltip-title">
+      <span>${title}</span>
+    </div>
+    <div class="tooltip-desc">${desc}</div>
+    ${eqText}
+    ${tableHtml}
+  `;
+  showTooltip(e, content);
+}
+
+function showFFTooltip(e, ffText) {
+  let title = `${ffType} Flip-Flop`;
+  let desc = "";
+  let tableHtml = "";
+
+  if (ffType === "JK") {
+    desc = `特性方程式：Q(t+1) = J·Q' + K'·Q<br>激勵表如下：`;
+    tableHtml = `
+      <table class="tooltip-table">
+        <tr><th>Q → Q(t+1)</th><th>J</th><th>K</th></tr>
+        <tr><td>0 → 0</td><td>0</td><td>X</td></tr>
+        <tr><td>0 → 1</td><td>1</td><td>X</td></tr>
+        <tr><td>1 → 0</td><td>X</td><td>1</td></tr>
+        <tr><td>1 → 1</td><td>X</td><td>0</td></tr>
+      </table>
+    `;
+  } else if (ffType === "T") {
+    desc = `特性方程式：Q(t+1) = T ⊕ Q<br>當 T=1 時狀態翻轉，T=0 時狀態保持。`;
+    tableHtml = `
+      <table class="tooltip-table">
+        <tr><th>Q → Q(t+1)</th><th>T</th></tr>
+        <tr><td>0 → 0</td><td>0</td></tr>
+        <tr><td>0 → 1</td><td>1</td></tr>
+        <tr><td>1 → 0</td><td>1</td></tr>
+        <tr><td>1 → 1</td><td>0</td></tr>
+      </table>
+    `;
+  } else if (ffType === "D") {
+    desc = `特性方程式：Q(t+1) = D<br>次一狀態完全等於當前 D 輸入的值。`;
+    tableHtml = `
+      <table class="tooltip-table">
+        <tr><th>Q → Q(t+1)</th><th>D</th></tr>
+        <tr><td>0 → 0</td><td>0</td></tr>
+        <tr><td>0 → 1</td><td>1</td></tr>
+        <tr><td>1 → 0</td><td>0</td></tr>
+        <tr><td>1 → 1</td><td>1</td></tr>
+      </table>
+    `;
+  }
+
+  const content = `
+    <div class="tooltip-title">
+      <span>${title} (${ffText})</span>
+    </div>
+    <div class="tooltip-desc">${desc}</div>
+    ${tableHtml}
+  `;
+  showTooltip(e, content);
+}
+
+// 監聽 SVG 中的點擊事件，進行事件代理
+circuitSvg.addEventListener("click", (e) => {
+  // 檢查是否點擊邏輯閘 (class 為 logic-gate)
+  const gateTarget = e.target.closest(".logic-gate");
+  if (gateTarget) {
+    e.stopPropagation();
+    const type = gateTarget.getAttribute("data-type") || "AND";
+    const eqName = gateTarget.getAttribute("data-equation");
+    showGateTooltip(e, type, eqName);
+    return;
+  }
+
+  // 檢查是否點擊正反器框
+  const ffTarget = e.target.closest(".flip-flops rect");
+  if (ffTarget) {
+    e.stopPropagation();
+    // 取得對應正反器的 Q0/Q1 標籤
+    const ffGroup = ffTarget.parentNode;
+    const textNode = ffGroup.querySelector("text");
+    const labelText = textNode ? textNode.textContent : "FF";
+    showFFTooltip(e, labelText);
+    return;
+  }
+
+  // 點擊其他地方隱藏懸浮窗
+  tooltip.style.display = "none";
+});
+
+// 點擊網頁其他地方也隱藏懸浮窗
+document.addEventListener("click", (e) => {
+  if (!e.target.closest("#circuit-svg")) {
+    tooltip.style.display = "none";
+  }
+});

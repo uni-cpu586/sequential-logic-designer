@@ -1,0 +1,434 @@
+/* 
+ * 序向電路自動化設計系統 - 現代美學樣式表
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
+
+:root {
+  --bg-primary: #0b0f19;
+  --bg-surface: rgba(17, 24, 39, 0.7);
+  --border-color: rgba(255, 255, 255, 0.08);
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  
+  --accent-blue: #3b82f6;
+  --accent-purple: #8b5cf6;
+  --accent-green: #10b981;
+  --accent-red: #f43f5e;
+  --accent-yellow: #f59e0b;
+
+  --shadow-glow: 0 0 20px rgba(59, 130, 246, 0.15);
+  --border-radius: 16px;
+  --transition-speed: 0.25s;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.08) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.08) 0px, transparent 50%);
+}
+
+/* 頂部導覽列 */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2.5rem;
+  border-bottom: 1px solid var(--border-color);
+  backdrop-filter: blur(12px);
+  background-color: rgba(11, 15, 25, 0.8);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+header h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+header h1::before {
+  content: '⚙️';
+  font-size: 1.4rem;
+}
+
+.subtitle {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border-color);
+}
+
+/* 主要佈局 */
+main {
+  display: grid;
+  grid-template-columns: 320px 350px 1fr;
+  gap: 1.5rem;
+  padding: 1.5rem 2.5rem;
+  flex: 1;
+  max-width: 1800px;
+  margin: 0 auto;
+  width: 100%;
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  main {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 卡片容器 (Glassmorphism) */
+.panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+.panel:hover {
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.panel-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* 控制表單樣式 */
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* 選項按鈕組 */
+.radio-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 0.25rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+}
+
+.radio-group label {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.6rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: all var(--transition-speed) ease;
+  margin-bottom: 0;
+}
+
+.radio-group input[type="radio"] {
+  display: none;
+}
+
+.radio-group input[type="radio"]:checked + span {
+  color: var(--text-primary);
+}
+
+.radio-group label:has(input[type="radio"]:checked) {
+  background: var(--accent-blue);
+  color: var(--text-primary);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+}
+
+/* 狀態表設計 */
+.state-table-container {
+  overflow-x: auto;
+  margin-top: 1rem;
+  max-height: 380px;
+  overflow-y: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+th, td {
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+th {
+  background: rgba(0, 0, 0, 0.3);
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+tr:hover td {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+select, input[type="text"] {
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 0.4rem;
+  border-radius: 6px;
+  text-align: center;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.85rem;
+  width: 100%;
+  outline: none;
+  transition: border-color var(--transition-speed);
+}
+
+select:focus, input[type="text"]:focus {
+  border-color: var(--accent-blue);
+}
+
+/* 按鈕樣式 */
+.btn-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+button {
+  flex: 1;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all var(--transition-speed) ease;
+  border: 1px solid var(--border-color);
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: var(--accent-blue);
+  color: white;
+  border: none;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* 方程式顯示 */
+.equation-card {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+  border-left: 4px solid var(--accent-blue);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.eq-label {
+  font-family: 'Fira Code', monospace;
+  font-weight: bold;
+  font-size: 0.95rem;
+  color: var(--accent-blue);
+}
+
+.eq-expr {
+  font-family: 'Fira Code', monospace;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+/* 卡諾圖樣式 (K-Map Grid) */
+.kmap-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin: 1rem 0;
+  background: rgba(0,0,0,0.15);
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.05);
+}
+
+.kmap-cell {
+  background: rgba(17, 24, 39, 0.6);
+  border: 1px solid rgba(255,255,255,0.04);
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 4px;
+  position: relative;
+}
+
+.kmap-cell-val {
+  font-family: 'Fira Code', monospace;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.kmap-cell-idx {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  position: absolute;
+  bottom: 2px;
+  right: 4px;
+}
+
+/* 電路圖控制 */
+.circuit-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.btn-tool {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.btn-tool:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* SVG 畫布區域 */
+.circuit-canvas-container {
+  width: 100%;
+  height: 520px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  position: relative;
+  overflow: hidden;
+}
+
+svg {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+}
+
+svg:active {
+  cursor: grabbing;
+}
+
+/* SVG 電路圖微觀互動樣式 */
+.logic-gate {
+  transition: filter var(--transition-speed), stroke var(--transition-speed);
+  cursor: pointer;
+}
+
+.logic-gate:hover {
+  filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.6));
+  stroke: #60a5fa;
+}
+
+.logic-gate[data-equation="Z"]:hover {
+  filter: drop-shadow(0 0 8px rgba(244, 63, 94, 0.6));
+  stroke: #fb7185;
+}
+
+/* 頁尾 */
+footer {
+  text-align: center;
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin-top: auto;
+}
+
+/* 左右切換的 Tab 按鈕 (用於中欄 K-Map 方程式顯示切換) */
+.tab-group {
+  display: flex;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  margin-bottom: 1rem;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 0.4rem;
+  border-radius: 6px;
+  background: transparent;
+  border: none;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.tab-btn.active {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  font-weight: 600;
+}

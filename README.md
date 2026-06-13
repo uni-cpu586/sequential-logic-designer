@@ -1,4 +1,4 @@
-# 序向電路設計自動化系統 (Sequential Circuit Design Automation System)
+# Sequential Circuit Design Automation System
 
 這是一個為**數位邏輯設計課程期末專題**打造的前端網頁工具。使用者只需輸入**狀態轉移表 (State Table)**，系統便會自動推導激勵表、透過可處理 Don't Care 的 **Quine-McCluskey 演算法**進行布林化簡，並即時渲染出對應的 **SVG 邏輯電路圖**。
 

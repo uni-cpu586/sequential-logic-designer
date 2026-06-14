@@ -661,6 +661,15 @@ fileInput.addEventListener("change", (e) => {
   }
 });
 
+// 防止瀏覽器預設開啟拖放檔案的行為
+window.addEventListener("dragover", (e) => {
+  e.preventDefault();
+}, false);
+
+window.addEventListener("drop", (e) => {
+  e.preventDefault();
+}, false);
+
 function fileToBase64(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();

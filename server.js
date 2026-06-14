@@ -69,7 +69,7 @@ Respond ONLY with a valid JSON matching this schema:
     "C": 1
   }
 }
-Note: Max 4 states (A, B, C, D). If it is Moore, the "z" in transitions can be omitted, but mooreOutputs must be filled. If it is Mealy, mooreOutputs can be empty.`
+Note: Max 8 states (A, B, C, D, E, F, G, H). If it is Moore, the "z" in transitions can be omitted, but mooreOutputs must be filled. If it is Mealy, mooreOutputs can be empty.`
               },
               {
                 inlineData: {

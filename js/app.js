@@ -80,8 +80,8 @@ function loadExample() {
  * 新增狀態 (最多 4 個狀態：A, B, C, D)
  */
 function addState() {
-  if (states.length >= 4) {
-    alert("本專案使用 2 個正反器，最高支援 4 個狀態 (A, B, C, D)！");
+  if (states.length >= 8) {
+    alert("本專案使用 3 個正反器，最高支援 8 個狀態 (A 至 H)！");
     return;
   }
   
@@ -283,7 +283,7 @@ function updateSolverAndCircuit() {
 }
 
 /**
- * 渲染卡諾圖網格 (3 變數)
+ * 渲染卡諾圖網格 (動態支援 3 與 4 變數)
  */
 function renderKMap(solved) {
   kmapGridContainer.innerHTML = "";
@@ -296,59 +296,114 @@ function renderKMap(solved) {
   const numFFs = solved.numFFs;
   const numVars = numFFs + 1;
 
-  // 3 變數卡諾圖格網對應
-  // 縱軸: Q1 Q0 (00, 01, 11, 10)
-  // 橫軸: X (0, 1)
-  const grayCodeRows = [0, 1, 3, 2]; // 00, 01, 11, 10
-  const cols = [0, 1]; // X=0, X=1
+  // 動態更新卡諾圖軸標籤
+  const kmapRowLabel = document.getElementById("kmap-row-label");
+  const kmapColLabel = document.getElementById("kmap-col-label");
+  if (kmapRowLabel && kmapColLabel) {
+    if (numVars === 4) {
+      kmapRowLabel.textContent = "直軸: Q2 Q1 (00, 01, 11, 10)";
+      kmapColLabel.textContent = "橫軸: Q0 X (00, 01, 11, 10)";
+    } else if (numVars === 3) {
+      kmapRowLabel.textContent = "直軸: Q1 Q0 (00, 01, 11, 10)";
+      kmapColLabel.textContent = "橫軸: X (0, 1)";
+    } else {
+      kmapRowLabel.textContent = "直軸: Q0 (0, 1)";
+      kmapColLabel.textContent = "橫軸: X (0, 1)";
+    }
+  }
 
-  grayCodeRows.forEach(rowVal => {
-    cols.forEach(colVal => {
-      // 合併得到真值表索引 (Q1 Q0 X)
-      // rowVal 二進位代表 Q1 Q0, colVal 代表 X
-      const cellIndex = (rowVal << 1) | colVal;
-      const cellValue = mapData.table[cellIndex];
+  // 根據變數數量渲染不同大小與排序的卡諾圖
+  if (numVars === 4) {
+    // 4 變數卡諾圖 (Q2 Q1 X Q0) - 4x4 格網
+    const grayCodeRows = [0, 1, 3, 2]; // Q2 Q1
+    const grayCodeCols = [0, 1, 3, 2]; // Q0 X
 
-      const cell = document.createElement("div");
-      cell.className = "kmap-cell";
+    grayCodeRows.forEach(rowVal => {
+      grayCodeCols.forEach(colVal => {
+        const cellIndex = (rowVal << 2) | colVal;
+        const cellValue = mapData.table[cellIndex];
 
-      // 檢查此單元格是否在化簡後的圈選組中 (增加視覺互動)
-      const binaryString = cellIndex.toString(2).padStart(numVars, "0");
-      let isInGroup = false;
+        const cell = document.createElement("div");
+        cell.className = "kmap-cell";
 
-      // 如果有被簡化方程式的項覆蓋，可給予微亮色彩
-      eq.rawImplicants.forEach((imp, impIdx) => {
-        const impStr = imp.toString(numVars);
-        let match = true;
-        for (let charIdx = 0; charIdx < numVars; charIdx++) {
-          if (impStr[charIdx] !== "-" && impStr[charIdx] !== binaryString[charIdx]) {
-            match = false;
-            break;
+        const binaryString = cellIndex.toString(2).padStart(numVars, "0");
+
+        eq.rawImplicants.forEach((imp) => {
+          const impStr = imp.toString(numVars);
+          let match = true;
+          for (let charIdx = 0; charIdx < numVars; charIdx++) {
+            if (impStr[charIdx] !== "-" && impStr[charIdx] !== binaryString[charIdx]) {
+              match = false;
+              break;
+            }
           }
-        }
-        if (match) {
-          isInGroup = true;
-          // 用不同的色系代表不同的圈選組
-          cell.style.boxShadow = `inset 0 0 12px rgba(59, 130, 246, 0.4)`;
-          cell.style.borderColor = "rgba(59, 130, 246, 0.6)";
-        }
+          if (match) {
+            cell.style.boxShadow = `inset 0 0 12px rgba(59, 130, 246, 0.4)`;
+            cell.style.borderColor = "rgba(59, 130, 246, 0.6)";
+          }
+        });
+
+        const valSpan = document.createElement("span");
+        valSpan.className = "kmap-cell-val";
+        valSpan.textContent = cellValue !== undefined ? cellValue : "X";
+        if (valSpan.textContent === "1") valSpan.style.color = "var(--accent-blue)";
+        else if (valSpan.textContent === "X") valSpan.style.color = "var(--accent-yellow)";
+        
+        const idxSpan = document.createElement("span");
+        idxSpan.className = "kmap-cell-idx";
+        idxSpan.textContent = cellIndex;
+
+        cell.appendChild(valSpan);
+        cell.appendChild(idxSpan);
+        kmapGridContainer.appendChild(cell);
       });
-
-      const valSpan = document.createElement("span");
-      valSpan.className = "kmap-cell-val";
-      valSpan.textContent = cellValue;
-      if (cellValue === "1") valSpan.style.color = "var(--accent-blue)";
-      else if (cellValue === "X") valSpan.style.color = "var(--accent-yellow)";
-      
-      const idxSpan = document.createElement("span");
-      idxSpan.className = "kmap-cell-idx";
-      idxSpan.textContent = cellIndex;
-
-      cell.appendChild(valSpan);
-      cell.appendChild(idxSpan);
-      kmapGridContainer.appendChild(cell);
     });
-  });
+  } else {
+    // 3 變數卡諾圖 (Q1 Q0 X) - 2x4 格網
+    const grayCodeRows = [0, 1, 3, 2];
+    const cols = [0, 1];
+
+    grayCodeRows.forEach(rowVal => {
+      cols.forEach(colVal => {
+        const cellIndex = (rowVal << 1) | colVal;
+        const cellValue = mapData.table[cellIndex];
+
+        const cell = document.createElement("div");
+        cell.className = "kmap-cell";
+
+        const binaryString = cellIndex.toString(2).padStart(numVars, "0");
+
+        eq.rawImplicants.forEach((imp) => {
+          const impStr = imp.toString(numVars);
+          let match = true;
+          for (let charIdx = 0; charIdx < numVars; charIdx++) {
+            if (impStr[charIdx] !== "-" && impStr[charIdx] !== binaryString[charIdx]) {
+              match = false;
+              break;
+            }
+          }
+          if (match) {
+            cell.style.boxShadow = `inset 0 0 12px rgba(59, 130, 246, 0.4)`;
+            cell.style.borderColor = "rgba(59, 130, 246, 0.6)";
+          }
+        });
+
+        const valSpan = document.createElement("span");
+        valSpan.className = "kmap-cell-val";
+        valSpan.textContent = cellValue !== undefined ? cellValue : "X";
+        if (valSpan.textContent === "1") valSpan.style.color = "var(--accent-blue)";
+        else if (valSpan.textContent === "X") valSpan.style.color = "var(--accent-yellow)";
+        
+        const idxSpan = document.createElement("span");
+        idxSpan.className = "kmap-cell-idx";
+        idxSpan.textContent = cellIndex;
+
+        cell.appendChild(valSpan);
+        cell.appendChild(idxSpan);
+        kmapGridContainer.appendChild(cell);
+      });
+    });
+  }
 }
 
 // --- SVG 縮放、拖曳與下載事件 ---

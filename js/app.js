@@ -613,7 +613,6 @@ document.addEventListener("click", (e) => {
 
 const aiSolverToggle = document.getElementById("ai-solver-toggle");
 const aiSolverWrapper = document.getElementById("ai-solver-wrapper");
-const geminiKeyInput = document.getElementById("gemini-key");
 const uploadZone = document.getElementById("upload-zone");
 const fileInput = document.getElementById("file-input");
 const aiStatus = document.getElementById("ai-status");
@@ -622,15 +621,6 @@ const aiStatusText = document.getElementById("ai-status-text");
 // 摺疊/展開選單
 aiSolverToggle.addEventListener("click", () => {
   aiSolverWrapper.classList.toggle("collapsed");
-});
-
-// 載入與儲存 API Key
-const savedKey = localStorage.getItem("gemini_api_key");
-if (savedKey) {
-  geminiKeyInput.value = savedKey;
-}
-geminiKeyInput.addEventListener("input", () => {
-  localStorage.setItem("gemini_api_key", geminiKeyInput.value.trim());
 });
 
 // 拖曳與上傳事件
@@ -684,12 +674,6 @@ function fileToBase64(file) {
 }
 
 async function handleImageUpload(file) {
-  const apiKey = geminiKeyInput.value.trim();
-  if (!apiKey) {
-    alert("請先輸入您的 Gemini API Key！");
-    return;
-  }
-
   if (!file.type.startsWith("image/")) {
     alert("請上傳圖片檔案！");
     return;
@@ -702,48 +686,14 @@ async function handleImageUpload(file) {
     const base64Data = await fileToBase64(file);
     aiStatusText.textContent = "AI 分析解題中...";
 
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+    const response = await fetch("/api/solve-image", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                text: `You are a Digital Logic Design helper.
-Analyze this image (which contains a state table, state diagram, or text description of a sequential circuit).
-Extract the state transitions and outputs.
-Respond ONLY with a valid JSON matching this schema:
-{
-  "modelType": "Mealy" | "Moore",
-  "ffType": "JK" | "T" | "D",
-  "states": ["A", "B", "C"],
-  "transitions": [
-    { "presentState": "A", "x": 0, "nextState": "A", "z": 0 },
-    { "presentState": "A", "x": 1, "nextState": "B", "z": 0 }
-  ],
-  "mooreOutputs": {
-    "A": 0,
-    "B": 0,
-    "C": 1
-  }
-}
-Note: Max 4 states (A, B, C, D). If it is Moore, the "z" in transitions can be omitted, but mooreOutputs must be filled. If it is Mealy, mooreOutputs can be empty.`
-              },
-              {
-                inlineData: {
-                  mimeType: file.type,
-                  data: base64Data
-                }
-              }
-            ]
-          }
-        ],
-        generationConfig: {
-          responseMimeType: "application/json"
-        }
+        mimeType: file.type,
+        base64Data: base64Data
       })
     });
 

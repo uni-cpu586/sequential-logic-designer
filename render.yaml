@@ -1,5 +1,9 @@
 services:
   - type: web
     name: sequential-logic-designer
-    runtime: static
-    publishPath: .
+    runtime: node
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: GEMINI_API_KEY
+        sync: false

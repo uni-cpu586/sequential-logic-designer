@@ -1,0 +1,13 @@
+{
+  "name": "sequential-logic-designer",
+  "version": "1.0.0",
+  "description": "Sequential Circuit Design Automation System",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

@@ -608,3 +608,189 @@ document.addEventListener("click", (e) => {
     tooltip.style.display = "none";
   }
 });
+
+// --- AI 圖片解題相關邏輯 (AI Image Solver Logic) ---
+
+const aiSolverToggle = document.getElementById("ai-solver-toggle");
+const aiSolverWrapper = document.getElementById("ai-solver-wrapper");
+const geminiKeyInput = document.getElementById("gemini-key");
+const uploadZone = document.getElementById("upload-zone");
+const fileInput = document.getElementById("file-input");
+const aiStatus = document.getElementById("ai-status");
+const aiStatusText = document.getElementById("ai-status-text");
+
+// 摺疊/展開選單
+aiSolverToggle.addEventListener("click", () => {
+  aiSolverWrapper.classList.toggle("collapsed");
+});
+
+// 載入與儲存 API Key
+const savedKey = localStorage.getItem("gemini_api_key");
+if (savedKey) {
+  geminiKeyInput.value = savedKey;
+}
+geminiKeyInput.addEventListener("input", () => {
+  localStorage.setItem("gemini_api_key", geminiKeyInput.value.trim());
+});
+
+// 拖曳與上傳事件
+uploadZone.addEventListener("click", () => {
+  fileInput.click();
+});
+
+uploadZone.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  uploadZone.classList.add("dragover");
+});
+
+uploadZone.addEventListener("dragleave", () => {
+  uploadZone.classList.remove("dragover");
+});
+
+uploadZone.addEventListener("drop", (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove("dragover");
+  if (e.dataTransfer.files.length > 0) {
+    handleImageUpload(e.dataTransfer.files[0]);
+  }
+});
+
+fileInput.addEventListener("change", (e) => {
+  if (e.target.files.length > 0) {
+    handleImageUpload(e.target.files[0]);
+  }
+});
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result;
+      const base64Data = result.split(",")[1];
+      resolve(base64Data);
+    };
+    reader.onerror = error => reject(error);
+    reader.readAsDataURL(file);
+  });
+}
+
+async function handleImageUpload(file) {
+  const apiKey = geminiKeyInput.value.trim();
+  if (!apiKey) {
+    alert("請先輸入您的 Gemini API Key！");
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    alert("請上傳圖片檔案！");
+    return;
+  }
+
+  aiStatusText.textContent = "正在讀取圖片...";
+  aiStatus.style.display = "flex";
+
+  try {
+    const base64Data = await fileToBase64(file);
+    aiStatusText.textContent = "AI 分析解題中...";
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                text: `You are a Digital Logic Design helper.
+Analyze this image (which contains a state table, state diagram, or text description of a sequential circuit).
+Extract the state transitions and outputs.
+Respond ONLY with a valid JSON matching this schema:
+{
+  "modelType": "Mealy" | "Moore",
+  "ffType": "JK" | "T" | "D",
+  "states": ["A", "B", "C"],
+  "transitions": [
+    { "presentState": "A", "x": 0, "nextState": "A", "z": 0 },
+    { "presentState": "A", "x": 1, "nextState": "B", "z": 0 }
+  ],
+  "mooreOutputs": {
+    "A": 0,
+    "B": 0,
+    "C": 1
+  }
+}
+Note: Max 4 states (A, B, C, D). If it is Moore, the "z" in transitions can be omitted, but mooreOutputs must be filled. If it is Mealy, mooreOutputs can be empty.`
+              },
+              {
+                inlineData: {
+                  mimeType: file.type,
+                  data: base64Data
+                }
+              }
+            ]
+          }
+        ],
+        generationConfig: {
+          responseMimeType: "application/json"
+        }
+      })
+    });
+
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error?.message || `HTTP error ${response.status}`);
+    }
+
+    const result = await response.json();
+    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) {
+      throw new Error("Gemini 回傳內容為空，請確認圖片內容是否清晰。");
+    }
+
+    const parsed = JSON.parse(text);
+    
+    // 驗證與更新狀態
+    if (!parsed.modelType || !parsed.ffType || !parsed.states || !parsed.transitions) {
+      throw new Error("AI 回傳的 JSON 格式不正確，缺少必要欄位。");
+    }
+
+    // 更新全域變數
+    modelType = parsed.modelType;
+    ffType = parsed.ffType;
+    states = parsed.states;
+    transitions = parsed.transitions;
+    if (modelType === "Moore" && parsed.mooreOutputs) {
+      mooreOutputs = parsed.mooreOutputs;
+    }
+
+    // 更新 UI 元件狀態
+    document.querySelectorAll('input[name="model-type"]').forEach(radio => {
+      radio.checked = (radio.value === modelType);
+    });
+    btnLoadExample.textContent = `載入 ${modelType} 範例`;
+
+    document.querySelectorAll('input[name="ff-type"]').forEach(radio => {
+      radio.checked = (radio.value === ffType);
+    });
+
+    // 重新執行渲染流程
+    updateTabsList();
+    renderStateTable();
+    updateSolverAndCircuit();
+
+    aiStatusText.textContent = "解題成功！";
+    setTimeout(() => {
+      aiStatus.style.display = "none";
+    }, 2000);
+
+  } catch (error) {
+    console.error(error);
+    aiStatusText.textContent = `失敗: ${error.message}`;
+    alert(`AI 解析失敗，請確認 API 金鑰與圖片格式是否正確。\n錯誤訊息: ${error.message}`);
+    setTimeout(() => {
+      aiStatus.style.display = "none";
+    }, 5000);
+  }
+}

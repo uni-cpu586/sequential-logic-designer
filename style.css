@@ -1,25 +1,25 @@
 /* 
- * Sequential Circuit Design Automation System - Light Desktop Window Theme
+ * Sequential Circuit Design Automation System - Cyberpunk Neon Theme
  */
 
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
 
 :root {
-  --bg-primary: #f1f5f9; /* 淺灰底色 */
-  --bg-surface: #ffffff; /* 純白卡片 */
-  --border-color: #cbd5e1; /* 邊框線條 */
-  --text-primary: #0f172a; /* 深色文字 */
-  --text-secondary: #475569; /* 次要文字 */
+  --bg-primary: #05070f; /* 極深底色 */
+  --bg-surface: rgba(13, 18, 30, 0.75); /* 半透明暗色面板 */
+  --border-color: rgba(255, 255, 255, 0.06); /* 邊框線條 */
+  --text-primary: #f8fafc; /* Crisp 白色文字 */
+  --text-secondary: #94a3b8; /* 次要文字 */
   
-  --accent-blue: #3b82f6;
-  --accent-purple: #8b5cf6;
-  --accent-green: #10b981;
-  --accent-red: #ef4444;
-  --accent-yellow: #f59e0b;
+  --accent-blue: #3b82f6; /* 電子藍 */
+  --accent-purple: #a855f7; /* 霓虹紫 */
+  --accent-green: #10b981; /* 螢光綠 */
+  --accent-red: #ef4444; /* 霓虹紅 */
+  --accent-yellow: #f59e0b; /* 雷射黃 */
 
-  --shadow-glow: 0 4px 10px rgba(0, 0, 0, 0.04);
-  --border-radius: 8px;
-  --transition-speed: 0.2s;
+  --shadow-glow: 0 0 15px rgba(59, 130, 246, 0.1);
+  --border-radius: 12px;
+  --transition-speed: 0.25s;
 }
 
 * {
@@ -36,6 +36,10 @@ body {
   display: flex;
   flex-direction: column;
   overflow-x: hidden;
+  /* 背景加入紫色與藍色的霓虹光暈 */
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.12) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.12) 0px, transparent 50%);
 }
 
 /* 視窗標題列 (仿照 Windows/Mac 桌面視窗) */
@@ -43,14 +47,15 @@ header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.65rem 1.5rem;
-  background-color: #1e293b; /* 深色標題列 */
+  padding: 0.75rem 1.5rem;
+  background-color: rgba(10, 15, 26, 0.85); /* 半透明標題列 */
+  backdrop-filter: blur(12px);
   color: #ffffff;
-  border-bottom: 1px solid #0f172a;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 header h1 {
@@ -59,15 +64,16 @@ header h1 {
   color: #f8fafc;
   display: flex;
   align-items: center;
+  text-shadow: 0 0 10px rgba(59, 130, 246, 0.5); /* 標題發光 */
 }
 
 .subtitle {
   font-size: 0.8rem;
   color: #94a3b8;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
   padding: 0.15rem 0.6rem;
   border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 /* 視窗控制按鈕 */
@@ -86,9 +92,9 @@ header h1 {
   cursor: pointer;
 }
 
-.win-btn.close { background-color: #ef4444; }
-.win-btn.max { background-color: #f59e0b; }
-.win-btn.min { background-color: #10b981; }
+.win-btn.close { background-color: #ef4444; box-shadow: 0 0 6px #ef4444; }
+.win-btn.max { background-color: #f59e0b; box-shadow: 0 0 6px #f59e0b; }
+.win-btn.min { background-color: #10b981; box-shadow: 0 0 6px #10b981; }
 
 /* 主要佈局 */
 main {
@@ -109,27 +115,31 @@ main {
   }
 }
 
-/* 卡片容器 (無毛玻璃，改為俐落的白底彩色外框) */
+/* 卡片容器 (毛玻璃加上發光外框) */
 .panel {
   background: var(--bg-surface);
-  border: 1.5px solid var(--border-color);
+  border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
   padding: 1.25rem;
-  box-shadow: var(--shadow-glow);
-  transition: transform var(--transition-speed);
+  backdrop-filter: blur(16px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+  transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
 }
 
-/* 特殊外框色（對應投影幕風格） */
+/* 特殊霓虹外框色與光暈（對應投影幕風格） */
 .panel.panel-red {
-  border: 2px solid var(--accent-red);
+  border: 1.5px solid rgba(239, 68, 68, 0.4);
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.08), inset 0 0 10px rgba(239, 68, 68, 0.03);
 }
 
 .panel.panel-blue {
-  border: 2px solid var(--accent-blue);
+  border: 1.5px solid rgba(59, 130, 246, 0.4);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.08), inset 0 0 10px rgba(59, 130, 246, 0.03);
 }
 
 .panel.panel-green {
-  border: 2px solid var(--accent-green);
+  border: 1.5px solid rgba(16, 185, 129, 0.4);
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.08), inset 0 0 10px rgba(16, 185, 129, 0.03);
 }
 
 .panel-title {
@@ -137,7 +147,7 @@ main {
   font-weight: 700;
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -166,10 +176,10 @@ main {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4px;
-  background: #f1f5f9;
+  background: rgba(0, 0, 0, 0.3);
   padding: 3px;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .radio-group label {
@@ -195,8 +205,9 @@ main {
 }
 
 .radio-group label:has(input[type="radio"]:checked) {
-  background: #334155; /* 深灰藍選中底色 */
+  background: var(--accent-blue); /* 電子藍選中底色 */
   color: #ffffff;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4);
 }
 
 /* 狀態表設計 */
@@ -206,7 +217,8 @@ main {
   max-height: 380px;
   overflow-y: auto;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 table {
@@ -218,25 +230,25 @@ table {
 
 th, td {
   padding: 0.5rem 0.4rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 th {
-  background: #f1f5f9;
+  background: rgba(10, 15, 26, 0.6);
   font-weight: 700;
   color: var(--text-secondary);
   font-size: 0.75rem;
   text-transform: uppercase;
-  border-bottom: 1.5px solid #cbd5e1;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.08);
 }
 
 tr:hover td {
-  background: #f8fafc;
+  background: rgba(255, 255, 255, 0.02);
 }
 
 select, input[type="text"] {
-  background: #ffffff;
-  border: 1px solid #cbd5e1;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   color: var(--text-primary);
   padding: 0.35rem;
   border-radius: 4px;
@@ -250,6 +262,7 @@ select, input[type="text"] {
 
 select:focus, input[type="text"]:focus {
   border-color: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
 }
 
 /* 按鈕樣式 */
@@ -267,36 +280,38 @@ button {
   font-size: 0.8rem;
   cursor: pointer;
   transition: all var(--transition-speed) ease;
-  border: 1px solid #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   font-family: inherit;
 }
 
 .btn-primary {
-  background: #334155;
+  background: var(--accent-blue);
   color: white;
   border: none;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.2);
 }
 
 .btn-primary:hover {
-  background: #1e293b;
+  background: #2563eb;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
 }
 
 .btn-secondary {
-  background: #ffffff;
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-primary);
 }
 
 .btn-secondary:hover {
-  background: #f1f5f9;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 /* 方程式顯示 */
 .equation-card {
-  background: #f8fafc;
+  background: rgba(0, 0, 0, 0.25);
   border-radius: 6px;
   padding: 0.6rem 0.8rem;
   margin-bottom: 0.5rem;
-  border: 1px solid #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-left: 4px solid var(--accent-blue);
   display: flex;
   justify-content: space-between;
@@ -308,6 +323,7 @@ button {
   font-weight: 700;
   font-size: 0.9rem;
   color: var(--accent-blue);
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.4);
 }
 
 .eq-expr {
@@ -323,15 +339,15 @@ button {
   grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   margin: 0.75rem 0;
-  background: #f1f5f9;
+  background: rgba(0, 0, 0, 0.2);
   padding: 6px;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .kmap-cell {
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  background: rgba(15, 23, 42, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.04);
   aspect-ratio: 1;
   display: flex;
   flex-direction: column;
@@ -350,7 +366,7 @@ button {
 
 .kmap-cell-idx {
   font-size: 0.6rem;
-  color: #94a3b8;
+  color: #64748b;
   position: absolute;
   bottom: 1px;
   right: 3px;
@@ -373,24 +389,24 @@ button {
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  background: #f1f5f9;
+  background: rgba(255, 255, 255, 0.04);
   color: var(--text-secondary);
-  border: 1px solid #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   font-size: 0.85rem;
 }
 
 .btn-tool:hover {
-  background: #e2e8f0;
+  background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
 }
 
-/* SVG 畫布區域 (改為經典白底線稿圖風格) */
+/* SVG 畫布區域 (改為炫酷的暗黑霓虹風格) */
 .circuit-canvas-container {
   width: 100%;
   height: 520px;
-  background: #ffffff; /* 純白背景 */
+  background: #030712; /* 深邃黑背景 */
   border-radius: 6px;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
   position: relative;
   overflow: hidden;
 }
@@ -399,123 +415,157 @@ svg {
   width: 100%;
   height: 100%;
   cursor: grab;
-  background-color: #ffffff;
+  background-color: #030712;
 }
 
 svg:active {
   cursor: grabbing;
 }
 
-/* --- SVG 電路教科書線稿風格強制覆寫 --- */
+/* --- SVG 電路 Cyberpunk 霓虹風格覆寫 --- */
 
 /* 1. 垂直軌道導線與標籤 */
 .bus-rails line {
-  stroke: #94a3b8 !important; /* 灰黑軌道線 */
+  stroke: rgba(255, 255, 255, 0.12) !important; /* 灰白半透明線 */
   stroke-width: 1.2px !important;
 }
 
 .bus-rails text {
-  fill: #0f172a !important; /* 純黑軌道文字 */
-  font-weight: 700 !important;
+  fill: #94a3b8 !important; /* 灰色軌道文字 */
+  font-weight: 600 !important;
 }
 
-.bus-rails path,
+/* NOT 閘 (反相器) */
+.bus-rails path[data-type="NOT"] {
+  stroke: var(--accent-blue) !important;
+  stroke-width: 2px !important;
+  fill: #080b11 !important;
+}
+
 .bus-rails circle {
-  stroke: #0f172a !important;
-  fill: #ffffff !important;
+  stroke: var(--accent-blue) !important;
   stroke-width: 1.5px !important;
+  fill: #080b11 !important;
 }
 
-.bus-rails circle {
-  fill: #0f172a !important;
-}
-
-/* 2. 正反器框本體與文字 */
+/* 2. 正反器框本體與文字 (螢光綠霓虹) */
 .flip-flops rect {
-  fill: #ffffff !important; /* 白色填充 */
-  stroke: #0f172a !important; /* 純黑外框 */
-  stroke-width: 1.5px !important;
-  filter: none !important; /* 移除發光陰影 */
+  fill: #080b11 !important; /* 深黑底色 */
+  stroke: var(--accent-green) !important; /* 螢光綠外框 */
+  stroke-width: 2px !important;
+  filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.3)) !important; /* 綠光暈 */
 }
 
 .flip-flops text {
-  fill: #0f172a !important;
+  fill: #e2e8f0 !important; /* 亮灰白字 */
   font-weight: 600 !important;
 }
 
 .flip-flops polygon {
-  stroke: #0f172a !important;
-  stroke-width: 1.5px !important;
+  stroke: var(--accent-green) !important;
+  stroke-width: 2px !important;
 }
 
 /* 3. 時脈 (CLK) 信號線 */
 .clock-wires line,
 .clock-wires path {
-  stroke: #475569 !important; /* 灰黑時脈線 */
+  stroke: #059669 !important; /* 暗螢光綠線 */
   stroke-width: 1.5px !important;
 }
 
 .clock-wires text {
-  fill: #475569 !important;
+  fill: var(--accent-green) !important;
   font-weight: bold !important;
+  text-shadow: 0 0 6px rgba(16, 185, 129, 0.3) !important;
 }
 
-/* 4. 邏輯閘 (AND, OR, NOT, XOR) */
+/* 4. 邏輯閘 (AND, OR) */
 .logic-gate {
-  fill: #ffffff !important; /* 白色填充 */
-  stroke: #0f172a !important; /* 純黑外框 */
-  stroke-width: 1.5px !important;
+  fill: #080b11 !important; /* 深黑底色 */
+  stroke: var(--accent-blue) !important; /* 霓虹藍 */
+  stroke-width: 2px !important;
+  filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.3)) !important; /* 藍光暈 */
   transition: stroke var(--transition-speed), filter var(--transition-speed);
+}
+
+.logic-gate[data-type="OR"] {
+  stroke: var(--accent-purple) !important; /* OR 閘給予霓虹紫 */
+  filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.3)) !important;
 }
 
 /* 邏輯閘內部的 & 或 ≥1 文字 */
 #circuit-gates text {
-  fill: #475569 !important;
+  fill: #60a5fa !important;
   font-weight: 700 !important;
 }
 
-/* 5. 電路連接線與點 */
+/* 5. 電路連接線與點 (霓虹藍) */
 #circuit-wires path,
-#circuit-wires line,
-.feedback-loops path {
-  stroke: #0f172a !important; /* 預設純黑連接線 */
-  stroke-width: 1.5px !important;
+#circuit-wires line {
+  stroke: var(--accent-blue) !important; /* 亮藍連接線 */
+  stroke-width: 1.8px !important;
   fill: none !important;
+}
+
+/* 反饋迴路線 (霓虹紫) */
+.feedback-loops path {
+  stroke: var(--accent-purple) !important; /* 螢光紫反饋線 */
+  stroke-width: 1.8px !important;
 }
 
 /* 導線交叉點的圓點 */
 #circuit-wires circle,
-.feedback-loops circle,
 .bus-rails circle {
-  fill: #0f172a !important; /* 純黑圓點 */
-  r: 3px !important;
+  fill: var(--accent-blue) !important; /* 亮藍接線點 */
+  r: 3.5px !important;
 }
 
-/* 6. 輸出信號 Z */
-#circuit-wires path[stroke="#f43f5e"] {
-  stroke: #0f172a !important; /* 輸出線也保持黑色 */
+.feedback-loops circle {
+  fill: var(--accent-purple) !important;
+  r: 3.5px !important;
+}
+
+/* 6. 輸出信號 Z (霓虹紅) */
+#circuit-wires path[stroke="#f43f5e"],
+#circuit-wires line[stroke="#f43f5e"] {
+  stroke: var(--accent-red) !important; /* 霓虹紅輸出線 */
+  stroke-width: 2px !important;
+  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.4)) !important;
 }
 
 #circuit-wires circle[fill="#f43f5e"] {
-  fill: #0f172a !important;
+  fill: var(--accent-red) !important;
 }
 
 #circuit-wires text[fill="#f43f5e"] {
-  fill: #0f172a !important;
+  fill: var(--accent-red) !important;
   font-weight: 700 !important;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.5) !important;
 }
 
-/* --- 微觀滑鼠懸停高亮互動 (讓教科書風格也有動態靈魂) --- */
-.logic-gate:hover {
-  stroke: var(--accent-blue) !important;
-  filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4));
-  cursor: pointer;
+/* --- 微觀滑鼠懸停雷射流動特效 (Cyberpunk 的靈魂) --- */
+@keyframes flow {
+  to {
+    stroke-dashoffset: -20;
+  }
 }
 
 #circuit-wires path:hover,
-.feedback-loops path:hover {
-  stroke: var(--accent-blue) !important;
-  stroke-width: 2px !important;
+#circuit-wires line:hover,
+.feedback-loops path:hover,
+.clock-wires path:hover,
+.clock-wires line:hover {
+  stroke: #ffffff !important; /* 懸停時化為耀眼的白熾雷射光流 */
+  stroke-width: 2.2px !important;
+  stroke-dasharray: 6 4;
+  animation: flow 1s linear infinite;
+  filter: drop-shadow(0 0 6px #38bdf8) !important; /* 強烈藍色發光 */
+  cursor: pointer;
+}
+
+.logic-gate:hover {
+  stroke: #ffffff !important; /* 懸停時邏輯閘高亮為白色 */
+  filter: drop-shadow(0 0 8px #38bdf8) !important;
   cursor: pointer;
 }
 
@@ -527,16 +577,16 @@ footer {
   color: var(--text-secondary);
   font-size: 0.8rem;
   margin-top: auto;
-  background: #ffffff;
+  background: rgba(10, 15, 26, 0.9);
 }
 
 /* Tab 按鈕 */
 .tab-group {
   display: flex;
-  background: #f1f5f9;
+  background: rgba(0, 0, 0, 0.3);
   padding: 2px;
   border-radius: 6px;
-  border: 1px solid #cbd5e1;
+  border: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 0.75rem;
 }
 
@@ -552,102 +602,7 @@ footer {
 }
 
 .tab-btn.active {
-  background: #ffffff;
-  color: var(--text-primary);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-}
-
-/* --- 動態訊號流動畫 --- */
-@keyframes flow {
-  to {
-    stroke-dashoffset: -20;
-  }
-}
-
-/* 懸停導線時的流動特效 */
-#circuit-wires path:hover,
-#circuit-wires line:hover,
-.feedback-loops path:hover,
-.clock-wires path:hover,
-.clock-wires line:hover {
-  stroke: var(--accent-blue) !important;
-  stroke-width: 2.2px !important;
-  stroke-dasharray: 6 4;
-  animation: flow 1s linear infinite;
-  cursor: pointer;
-}
-
-/* --- 元件點擊詳情懸浮窗 --- */
-.circuit-tooltip {
-  position: absolute;
-  background: rgba(15, 23, 42, 0.95);
-  color: #f8fafc;
-  border: 1.5px solid var(--accent-blue);
-  padding: 0.75rem 1rem;
-  border-radius: 6px;
-  font-size: 0.78rem;
-  box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.25);
-  max-width: 260px;
-  pointer-events: none;
-  font-family: inherit;
-  line-height: 1.4;
-  animation: fadeIn 0.15s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
-}
-
-.tooltip-title {
-  font-weight: 700;
-  color: #60a5fa;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  padding-bottom: 0.25rem;
-  margin-bottom: 0.5rem;
-  font-size: 0.82rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.tooltip-desc {
-  color: #94a3b8;
-  margin-bottom: 0.4rem;
-  font-size: 0.72rem;
-}
-
-.tooltip-eq {
-  font-family: 'Fira Code', monospace;
-  background: rgba(255, 255, 255, 0.05);
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.75rem;
-  color: #38bdf8;
-  margin-bottom: 0.5rem;
-  word-break: break-all;
-}
-
-.tooltip-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 0.4rem;
-  font-size: 0.7rem;
-}
-
-.tooltip-table th, 
-.tooltip-table td {
-  padding: 3px 4px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  text-align: center;
-}
-
-.tooltip-table th {
   background: rgba(255, 255, 255, 0.08);
-  color: #94a3b8;
-  font-weight: 600;
-}
-
-.tooltip-table tr:hover td {
-  background: rgba(255, 255, 255, 0.03);
+  color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }

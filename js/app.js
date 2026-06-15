@@ -1,11 +1,13 @@
 import { solveSequentialCircuit } from './solver.js';
 import { renderCircuit } from './renderer.js';
+import { renderStateDiagram } from './stateDiagram.js';
 
 // 全域狀態
 let states = ["A", "B", "C"];
 let modelType = "Mealy";
 let ffType = "JK";
 let activeTab = "J1";
+let currentView = "circuit"; // "circuit" | "state-diag" | "kmap-all"
 
 // Moore 狀態輸出預設值
 let mooreOutputs = {
@@ -263,6 +265,9 @@ function updateTabsList() {
 /**
  * 求解邏輯並重新繪製卡諾圖與電路圖
  */
+/**
+ * 求解邏輯並重新繪製卡諾圖與電路圖
+ */
 function updateSolverAndCircuit() {
   const solved = solveSequentialCircuit(modelType, ffType, states, transitions, mooreOutputs);
 
@@ -277,9 +282,165 @@ function updateSolverAndCircuit() {
     equationExpression.textContent = eq.algebraic.replace(/\*/g, " · ");
   }
 
-  // 3. 渲染電路圖
-  renderCircuit(circuitSvg, solved, ffType);
-  applyTransform();
+  // 3. 根據選中視圖進行渲染
+  const mainTitle = document.getElementById("main-panel-title");
+  const circuitSvg = document.getElementById("circuit-svg");
+  const kmapsDashboard = document.getElementById("kmaps-dashboard");
+  const toolbar = document.getElementById("circuit-toolbar-btns");
+  const legendLabel = document.getElementById("legend-text-label");
+  const legendTip = document.getElementById("circuit-legend-tip");
+
+  if (currentView === "circuit") {
+    mainTitle.textContent = "4. 動態邏輯電路圖";
+    circuitSvg.style.display = "block";
+    kmapsDashboard.style.display = "none";
+    if (toolbar) toolbar.style.display = "flex";
+    if (legendTip) legendTip.style.display = "flex";
+    if (legendLabel) legendLabel.textContent = "綠色: 時脈與反饋線 | 藍色: 激勵輸入邏輯 | 紅色: 輸出 Z";
+    
+    renderCircuit(circuitSvg, solved, ffType);
+    applyTransform();
+  } else if (currentView === "state-diag") {
+    mainTitle.textContent = "4. State Diagram";
+    circuitSvg.style.display = "block";
+    kmapsDashboard.style.display = "none";
+    if (toolbar) toolbar.style.display = "flex";
+    if (legendTip) legendTip.style.display = "flex";
+    if (legendLabel) legendLabel.textContent = "藍色: X = 0 轉移 | 橘黃色: X = 1 轉移 | 綠色節點: 狀態";
+    
+    renderStateDiagram(circuitSvg, solved, modelType, transitions, states, mooreOutputs);
+    applyTransform(); // 狀態圖也支援縮放平移！
+  } else if (currentView === "kmap-all") {
+    mainTitle.textContent = "4. K-Maps";
+    circuitSvg.style.display = "none";
+    kmapsDashboard.style.display = "block";
+    if (toolbar) toolbar.style.display = "none";
+    if (legendTip) legendTip.style.display = "flex";
+    if (legendLabel) legendLabel.textContent = "藍色格網: 圈選主要隱含項 (Prime Implicants)";
+    
+    renderAllKMapsDashboard(solved);
+  }
+}
+
+/**
+ * 渲染全域所有卡諾圖儀表板
+ */
+function renderAllKMapsDashboard(solved) {
+  const container = document.getElementById("kmaps-dashboard");
+  if (!container) return;
+  container.innerHTML = "";
+
+  const grid = document.createElement("div");
+  grid.className = "kmaps-grid-dashboard";
+  container.appendChild(grid);
+
+  const numFFs = solved.numFFs;
+  const numVars = numFFs + 1;
+
+  Object.keys(solved.kMaps).forEach(tab => {
+    const mapData = solved.kMaps[tab];
+    const eq = solved.equations[tab];
+    if (!mapData || !eq) return;
+
+    const card = document.createElement("div");
+    card.className = "kmap-dashboard-card";
+
+    // 標題與簡化公式
+    const title = document.createElement("div");
+    title.className = "kmap-dashboard-title";
+    title.textContent = `${tab} = ${eq.algebraic.replace(/\*/g, " · ")}`;
+    card.appendChild(title);
+
+    // 標籤提示
+    const labels = document.createElement("div");
+    labels.style.display = "flex";
+    labels.style.justify = "space-between";
+    labels.style.fontSize = "0.7rem";
+    labels.style.color = "var(--text-secondary)";
+    labels.style.marginBottom = "0.35rem";
+    if (numVars === 4) {
+      labels.textContent = "直: Q2Q1(00-10) | 橫: Q0X(00-10)";
+    } else if (numVars === 3) {
+      labels.textContent = "直: Q1Q0(00-10) | 橫: X(0-1)";
+    } else {
+      labels.textContent = "直: Q0(0-1) | 橫: X(0-1)";
+    }
+    card.appendChild(labels);
+
+    // 卡諾圖格網容器
+    const gridContainer = document.createElement("div");
+    gridContainer.className = "kmap-grid";
+    gridContainer.style.margin = "0";
+    gridContainer.style.padding = "4px";
+    gridContainer.style.background = "rgba(0,0,0,0.15)";
+    card.appendChild(gridContainer);
+
+    if (numVars === 4) {
+      const grayCodeRows = [0, 1, 3, 2];
+      const grayCodeCols = [0, 1, 3, 2];
+      grayCodeRows.forEach(rowVal => {
+        grayCodeCols.forEach(colVal => {
+          const cellIndex = (rowVal << 2) | colVal;
+          const cellValue = mapData.table[cellIndex];
+          const cell = createCellDOM(cellIndex, cellValue, eq, numVars);
+          gridContainer.appendChild(cell);
+        });
+      });
+    } else {
+      const grayCodeRows = [0, 1, 3, 2];
+      const cols = [0, 1];
+      grayCodeRows.forEach(rowVal => {
+        cols.forEach(colVal => {
+          const cellIndex = (rowVal << 1) | colVal;
+          const cellValue = mapData.table[cellIndex];
+          const cell = createCellDOM(cellIndex, cellValue, eq, numVars);
+          gridContainer.appendChild(cell);
+        });
+      });
+    }
+
+    grid.appendChild(card);
+  });
+}
+
+function createCellDOM(cellIndex, cellValue, eq, numVars) {
+  const cell = document.createElement("div");
+  cell.className = "kmap-cell";
+  cell.style.aspectRatio = "1";
+  cell.style.padding = "2px";
+
+  const binaryString = cellIndex.toString(2).padStart(numVars, "0");
+
+  eq.rawImplicants.forEach((imp) => {
+    const impStr = imp.toString(numVars);
+    let match = true;
+    for (let charIdx = 0; charIdx < numVars; charIdx++) {
+      if (impStr[charIdx] !== "-" && impStr[charIdx] !== binaryString[charIdx]) {
+        match = false;
+        break;
+      }
+    }
+    if (match) {
+      cell.style.boxShadow = `inset 0 0 10px rgba(59, 130, 246, 0.4)`;
+      cell.style.borderColor = "rgba(59, 130, 246, 0.6)";
+    }
+  });
+
+  const valSpan = document.createElement("span");
+  valSpan.className = "kmap-cell-val";
+  valSpan.style.fontSize = "0.9rem";
+  valSpan.textContent = cellValue !== undefined ? cellValue : "X";
+  if (valSpan.textContent === "1") valSpan.style.color = "var(--accent-blue)";
+  else if (valSpan.textContent === "X") valSpan.style.color = "var(--accent-yellow)";
+  
+  const idxSpan = document.createElement("span");
+  idxSpan.className = "kmap-cell-idx";
+  idxSpan.style.fontSize = "0.55rem";
+  idxSpan.textContent = cellIndex;
+
+  cell.appendChild(valSpan);
+  cell.appendChild(idxSpan);
+  return cell;
 }
 
 /**
@@ -501,6 +662,16 @@ document.getElementById("btn-add-state").addEventListener("click", addState);
 document.getElementById("btn-clear").addEventListener("click", clearTable);
 btnLoadExample.addEventListener("click", loadExample);
 
+// 全域視圖切換事件
+document.querySelectorAll(".view-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".view-btn").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    currentView = btn.getAttribute("data-view");
+    updateSolverAndCircuit();
+  });
+});
+
 // 初始化載入
 loadExample();
 updateTabsList();
@@ -663,159 +834,3 @@ document.addEventListener("click", (e) => {
     tooltip.style.display = "none";
   }
 });
-
-// --- AI 圖片解題相關邏輯 (AI Image Solver Logic) ---
-
-const aiSolverToggle = document.getElementById("ai-solver-toggle");
-const aiSolverWrapper = document.getElementById("ai-solver-wrapper");
-const uploadZone = document.getElementById("upload-zone");
-const fileInput = document.getElementById("file-input");
-const aiStatus = document.getElementById("ai-status");
-const aiStatusText = document.getElementById("ai-status-text");
-
-// 摺疊/展開選單
-aiSolverToggle.addEventListener("click", () => {
-  aiSolverWrapper.classList.toggle("collapsed");
-});
-
-// 拖曳與上傳事件
-uploadZone.addEventListener("click", () => {
-  fileInput.click();
-});
-
-uploadZone.addEventListener("dragover", (e) => {
-  e.preventDefault();
-  uploadZone.classList.add("dragover");
-});
-
-uploadZone.addEventListener("dragleave", () => {
-  uploadZone.classList.remove("dragover");
-});
-
-uploadZone.addEventListener("drop", (e) => {
-  e.preventDefault();
-  uploadZone.classList.remove("dragover");
-  if (e.dataTransfer.files.length > 0) {
-    handleImageUpload(e.dataTransfer.files[0]);
-  }
-});
-
-fileInput.addEventListener("change", (e) => {
-  if (e.target.files.length > 0) {
-    handleImageUpload(e.target.files[0]);
-  }
-});
-
-// 防止瀏覽器預設開啟拖放檔案的行為
-window.addEventListener("dragover", (e) => {
-  e.preventDefault();
-}, false);
-
-window.addEventListener("drop", (e) => {
-  e.preventDefault();
-}, false);
-
-function fileToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result;
-      const base64Data = result.split(",")[1];
-      resolve(base64Data);
-    };
-    reader.onerror = error => reject(error);
-    reader.readAsDataURL(file);
-  });
-}
-
-async function handleImageUpload(file) {
-  if (!file.type.startsWith("image/")) {
-    alert("請上傳圖片檔案！");
-    return;
-  }
-
-  aiStatusText.textContent = "正在讀取圖片...";
-  aiStatus.style.display = "flex";
-
-  try {
-    const base64Data = await fileToBase64(file);
-    aiStatusText.textContent = "AI 分析解題中...";
-
-    const response = await fetch("/api/solve-image", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        mimeType: file.type,
-        base64Data: base64Data
-      })
-    });
-
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error?.message || `HTTP error ${response.status}`);
-    }
-
-    let result;
-    try {
-      result = await response.json();
-    } catch (err) {
-      throw new Error("伺服器回傳格式不正確（可能是舊的伺服器行程仍在執行，請重啟伺服器）。");
-    }
-
-    const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
-    if (!text) {
-      throw new Error("Gemini 回傳內容為空，請確認圖片內容是否清晰。");
-    }
-
-    let parsed;
-    try {
-      parsed = JSON.parse(text);
-    } catch (err) {
-      throw new Error("AI 輸出的 JSON 格式有缺陷，請嘗試重新上傳或換張更清晰的照片。");
-    }
-    
-    // 驗證與更新狀態
-    if (!parsed.modelType || !parsed.ffType || !parsed.states || !parsed.transitions) {
-      throw new Error("AI 回傳的 JSON 格式不正確，缺少必要欄位。");
-    }
-
-    // 更新全域變數
-    modelType = parsed.modelType;
-    ffType = parsed.ffType;
-    states = parsed.states;
-    transitions = parsed.transitions;
-    if (modelType === "Moore" && parsed.mooreOutputs) {
-      mooreOutputs = parsed.mooreOutputs;
-    }
-
-    // 更新 UI 元件狀態
-    document.querySelectorAll('input[name="model-type"]').forEach(radio => {
-      radio.checked = (radio.value === modelType);
-    });
-    btnLoadExample.textContent = `載入 ${modelType} 範例`;
-
-    document.querySelectorAll('input[name="ff-type"]').forEach(radio => {
-      radio.checked = (radio.value === ffType);
-    });
-
-    // 重新執行渲染流程
-    updateTabsList();
-    renderStateTable();
-    updateSolverAndCircuit();
-
-    aiStatusText.textContent = "解題成功！";
-    setTimeout(() => {
-      aiStatus.style.display = "none";
-    }, 2000);
-
-  } catch (error) {
-    console.error(error);
-    aiStatusText.textContent = `失敗: ${error.message}`;
-    alert(`AI 解析失敗，請確認 API 金鑰與圖片格式是否正確。\n錯誤訊息: ${error.message}`);
-    setTimeout(() => {
-      aiStatus.style.display = "none";
-    }, 5000);
-  }
-}

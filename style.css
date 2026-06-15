@@ -826,3 +826,88 @@ svg text {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
+/* --- 全域視圖切換器 --- */
+.global-view-selector {
+  max-width: 1200px;
+  margin: 1.25rem auto 0 auto;
+  padding: 0 1.25rem;
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.view-btn {
+  padding: 0.65rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--text-secondary);
+  transition: all 0.25s ease;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.view-btn:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-primary);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.view-btn.active[data-view="circuit"] {
+  border-color: var(--accent-green) !important;
+  background: rgba(16, 185, 129, 0.1) !important;
+  color: var(--accent-green) !important;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.25);
+  text-shadow: 0 0 5px rgba(16, 185, 129, 0.4);
+}
+
+.view-btn.active[data-view="state-diag"] {
+  border-color: var(--accent-yellow) !important;
+  background: rgba(245, 158, 11, 0.1) !important;
+  color: var(--accent-yellow) !important;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.25);
+  text-shadow: 0 0 5px rgba(245, 158, 11, 0.4);
+}
+
+.view-btn.active[data-view="kmap-all"] {
+  border-color: var(--accent-blue) !important;
+  background: rgba(59, 130, 246, 0.1) !important;
+  color: var(--accent-blue) !important;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.25);
+  text-shadow: 0 0 5px rgba(59, 130, 246, 0.4);
+}
+
+/* --- 卡諾圖儀表板 --- */
+.kmaps-grid-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.25rem;
+  width: 100%;
+}
+
+.kmap-dashboard-card {
+  background: rgba(10, 15, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.kmap-dashboard-title {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 0.5rem;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0.35rem;
+  text-shadow: 0 0 6px rgba(56, 189, 248, 0.3);
+}

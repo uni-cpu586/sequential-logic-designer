@@ -778,7 +778,7 @@ function showFFTooltip(e, ffText) {
   let tableHtml = "";
 
   if (ffType === "JK") {
-    desc = `Characteristic Equation: Q(t+1) = J·Q' + K'·Q<br>Excitation Table:`;
+    desc = `特性方程式：Q(t+1) = J·Q' + K'·Q<br>激勵表如下：`;
     tableHtml = `
       <table class="tooltip-table">
         <tr><th>Q → Q(t+1)</th><th>J</th><th>K</th></tr>
@@ -789,7 +789,7 @@ function showFFTooltip(e, ffText) {
       </table>
     `;
   } else if (ffType === "T") {
-    desc = `Characteristic Equation: Q(t+1) = T ⊕ Q<br>T=1: Toggle, T=0: Hold.`;
+    desc = `特性方程式：Q(t+1) = T ⊕ Q<br>當 T=1 時狀態翻轉，T=0 時狀態保持。`;
     tableHtml = `
       <table class="tooltip-table">
         <tr><th>Q → Q(t+1)</th><th>T</th></tr>
@@ -800,7 +800,7 @@ function showFFTooltip(e, ffText) {
       </table>
     `;
   } else if (ffType === "D") {
-    desc = `Characteristic Equation: Q(t+1) = D<br>Next state is equal to the D input.`;
+    desc = `特性方程式：Q(t+1) = D<br>次一狀態完全等於當前 D 輸入的值。`;
     tableHtml = `
       <table class="tooltip-table">
         <tr><th>Q → Q(t+1)</th><th>D</th></tr>

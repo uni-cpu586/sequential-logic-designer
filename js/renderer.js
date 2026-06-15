@@ -90,15 +90,17 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
 
   railList.forEach(name => {
     const x = rails[name];
+    const isInput = name.startsWith("X");
     // 繪製軌道導線
     const line = createSVGElement("line", {
       x1: x,
       y1: 40,
       x2: x,
       y2: 600,
-      stroke: "rgba(255, 255, 255, 0.15)",
+      stroke: isInput ? "#3b82f6" : "#10b981",
       "stroke-width": "2",
-      "stroke-dasharray": name.includes("'") ? "2 2" : "none"
+      "stroke-dasharray": name.includes("'") ? "2 2" : "none",
+      class: isInput ? "rail-line rail-input" : "rail-line rail-feedback"
     });
     railGroup.appendChild(line);
 
@@ -106,11 +108,12 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
     const label = createSVGElement("text", {
       x: x,
       y: 30,
-      fill: "#94a3b8",
+      fill: isInput ? "#60a5fa" : "#34d399",
       "font-size": "12",
       "text-anchor": "middle",
       "font-family": "monospace",
-      "font-weight": "bold"
+      "font-weight": "bold",
+      class: isInput ? "rail-label rail-input" : "rail-label rail-feedback"
     });
     label.textContent = name;
     railGroup.appendChild(label);
@@ -145,9 +148,10 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
     cx: notXPrime - 3,
     cy: notY,
     r: 3,
-    fill: "#1e1e2e",
+    fill: "#030712",
     stroke: "#3b82f6",
-    "stroke-width": "2"
+    "stroke-width": "2",
+    class: "not-bubble"
   });
   railGroup.appendChild(bubble);
 
@@ -167,7 +171,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
     cx: notX,
     cy: notY,
     r: 4,
-    fill: "#3b82f6"
+    fill: "#3b82f6",
+    class: "connection-dot"
   });
   railGroup.appendChild(xDot);
 
@@ -216,7 +221,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
       "font-size": "14",
       "text-anchor": "middle",
       "font-family": "system-ui, sans-serif",
-      "font-weight": "600"
+      "font-weight": "600",
+      class: "ff-title"
     });
     label.textContent = `${ffType} FF (${ff.name})`;
     ffGroup.appendChild(label);
@@ -235,7 +241,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
       y: ff.y + ffHeight - 21,
       fill: "#10b981",
       "font-size": "10",
-      "font-family": "monospace"
+      "font-family": "monospace",
+      class: "ff-clk-label"
     });
     clkText.textContent = "CLK";
     ffGroup.appendChild(clkText);
@@ -249,7 +256,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
         "font-size": "12",
         "font-family": "monospace",
         "text-anchor": anchor,
-        "alignment-baseline": "middle"
+        "alignment-baseline": "middle",
+        class: "ff-pin-label"
       });
       pinText.textContent = text;
       ffGroup.appendChild(pinText);
@@ -446,7 +454,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
             cx: railX,
             cy: termY,
             r: 3.5,
-            fill: "#3b82f6"
+            fill: "#3b82f6",
+            class: "connection-dot"
           });
           wiresGroup.appendChild(dot);
 
@@ -487,7 +496,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
           fill: "rgba(255,255,255,0.4)",
           "font-size": "9",
           "font-family": "sans-serif",
-          "pointer-events": "none"
+          "pointer-events": "none",
+          "data-type": "AND"
         });
         gateText.textContent = "&";
         gatesGroup.appendChild(gateText);
@@ -513,7 +523,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
               cx: railX,
               cy: inputY,
               r: 3.5,
-              fill: "#3b82f6"
+              fill: "#3b82f6",
+              class: "connection-dot"
             });
             wiresGroup.appendChild(dot);
           }
@@ -570,7 +581,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
         fill: "rgba(255,255,255,0.4)",
         "font-size": "9",
         "font-family": "sans-serif",
-        "pointer-events": "none"
+        "pointer-events": "none",
+        "data-type": "OR"
       });
       gateText.textContent = "≥1";
       gatesGroup.appendChild(gateText);
@@ -597,7 +609,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
         d: `M ${orOutX} ${orOutY} H ${ffX}`,
         stroke: "#8b5cf6",
         "stroke-width": "2.5",
-        fill: "none"
+        fill: "none",
+        class: "or-output-wire"
       });
       wiresGroup.appendChild(finalWire);
     }
@@ -619,7 +632,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
       cx: width - 80,
       cy: zZone.targetY,
       r: 4,
-      fill: "#f43f5e"
+      fill: "#f43f5e",
+      class: "connection-dot output-dot"
     });
     wiresGroup.appendChild(zCircle);
 
@@ -652,7 +666,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
       stroke: "#10b981",
       "stroke-width": "2",
       fill: "none",
-      "stroke-dasharray": "none"
+      "stroke-dasharray": "none",
+      class: "feedback-wire"
     });
     feedbackGroup.appendChild(qPath);
 
@@ -661,7 +676,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
       cx: qRailX,
       cy: qOutY,
       r: 3.5,
-      fill: "#10b981"
+      fill: "#10b981",
+      class: "connection-dot feedback-dot"
     });
     feedbackGroup.appendChild(qDot);
 
@@ -676,7 +692,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
       stroke: "#10b981",
       "stroke-width": "2",
       fill: "none",
-      "stroke-dasharray": "3 2" // 虛線表示反向
+      "stroke-dasharray": "3 2", // 虛線表示反向
+      class: "feedback-wire"
     });
     feedbackGroup.appendChild(qPrimePath);
 
@@ -684,7 +701,8 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
       cx: qPrimeRailX,
       cy: qPrimeOutY,
       r: 3.5,
-      fill: "#10b981"
+      fill: "#10b981",
+      class: "connection-dot feedback-dot"
     });
     feedbackGroup.appendChild(qPrimeDot);
   });

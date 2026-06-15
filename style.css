@@ -660,11 +660,12 @@ footer {
   border-radius: 6px;
   font-size: 0.78rem;
   box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.25);
-  max-width: 260px;
-  pointer-events: none;
+  max-width: 280px;
+  pointer-events: auto; /* 允許滑鼠事件以進行拖曳與選取 */
   font-family: inherit;
   line-height: 1.4;
   animation: fadeIn 0.15s ease-out;
+  user-select: none; /* 防止拖曳時選取到文字 */
 }
 
 @keyframes fadeIn {
@@ -682,6 +683,7 @@ footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  cursor: move; /* 提示可拖曳移動 */
 }
 
 .tooltip-desc {
@@ -952,4 +954,24 @@ svg text {
   border-bottom: 1.5px solid rgba(255, 255, 255, 0.06);
   padding-bottom: 0.35rem;
   text-shadow: 0 0 6px rgba(56, 189, 248, 0.3);
+}
+
+/* --- 電路圖下方圖例儀表板樣式 --- */
+.circuit-legend-box {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 0.6rem 0.8rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 6px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.08);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.circuit-legend-box .legend-hint {
+  font-size: 0.76rem;
+  color: #64748b;
+  display: block;
 }

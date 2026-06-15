@@ -289,6 +289,7 @@ function updateSolverAndCircuit() {
   const toolbar = document.getElementById("circuit-toolbar-btns");
   const legendLabel = document.getElementById("legend-text-label");
   const legendTip = document.getElementById("circuit-legend-tip");
+  const legendHint = document.querySelector(".legend-hint");
 
   if (currentView === "circuit") {
     mainTitle.textContent = "4. 動態邏輯電路圖";
@@ -297,6 +298,7 @@ function updateSolverAndCircuit() {
     if (toolbar) toolbar.style.display = "flex";
     if (legendTip) legendTip.style.display = "flex";
     if (legendLabel) legendLabel.textContent = "🟢 綠色: 時脈與反饋線 | 🔵 藍色: 激勵輸入邏輯 | 🔴 紅色: 輸出 Z";
+    if (legendHint) legendHint.style.display = "block";
     
     renderCircuit(circuitSvg, solved, ffType);
     applyTransform();
@@ -307,6 +309,7 @@ function updateSolverAndCircuit() {
     if (toolbar) toolbar.style.display = "flex";
     if (legendTip) legendTip.style.display = "flex";
     if (legendLabel) legendLabel.textContent = "🔵 藍色: X = 0 轉移 | 🟡 橘黃色: X = 1 轉移 | 🟢 綠色節點: 狀態";
+    if (legendHint) legendHint.style.display = "block";
     
     renderStateDiagram(circuitSvg, solved, modelType, transitions, states, mooreOutputs);
     applyTransform(); // 狀態圖也支援縮放平移！
@@ -317,6 +320,7 @@ function updateSolverAndCircuit() {
     if (toolbar) toolbar.style.display = "none";
     if (legendTip) legendTip.style.display = "flex";
     if (legendLabel) legendLabel.textContent = "🔵 藍色格網: 圈選主要隱含項 (Prime Implicants)";
+    if (legendHint) legendHint.style.display = "none";
     
     renderAllKMapsDashboard(solved);
   }
@@ -678,7 +682,7 @@ updateTabsList();
 renderStateTable();
 updateSolverAndCircuit();
 
-// --- 懸浮窗 (Tooltip) 處理邏輯 ---
+// --- 懸浮窗 (Tooltip) 處理邏輯與拖曳功能 ---
 
 const tooltip = document.getElementById("circuit-tooltip");
 
@@ -686,14 +690,31 @@ function showTooltip(e, contentHtml) {
   const container = document.querySelector(".circuit-canvas-container");
   const rect = container.getBoundingClientRect();
   
-  // 計算相對於容器的座標
-  const x = e.clientX - rect.left;
-  const y = e.clientY - rect.top;
-  
   tooltip.innerHTML = contentHtml;
-  tooltip.style.left = `${x + 15}px`;
-  tooltip.style.top = `${y + 15}px`;
   tooltip.style.display = "block";
+  
+  // 取得真實尺寸 (必須在 display: block 之後才有寬高)
+  const tooltipRect = tooltip.getBoundingClientRect();
+  
+  // 預設坐標為滑鼠右下方
+  let x = e.clientX - rect.left + 15;
+  let y = e.clientY - rect.top + 15;
+  
+  // 邊界防禦：如果右邊超出，移至左邊
+  if (x + tooltipRect.width > rect.width) {
+    x = e.clientX - rect.left - tooltipRect.width - 15;
+  }
+  // 邊界防禦：如果底部超出，移至上方
+  if (y + tooltipRect.height > rect.height) {
+    y = e.clientY - rect.top - tooltipRect.height - 15;
+  }
+  
+  // 極限保護
+  x = Math.max(5, Math.min(x, rect.width - tooltipRect.width - 5));
+  y = Math.max(5, Math.min(y, rect.height - tooltipRect.height - 5));
+  
+  tooltip.style.left = `${x}px`;
+  tooltip.style.top = `${y}px`;
 }
 
 function showGateTooltip(e, type, eqName) {
@@ -742,6 +763,7 @@ function showGateTooltip(e, type, eqName) {
   const content = `
     <div class="tooltip-title">
       <span>${title}</span>
+      <span style="font-size: 0.62rem; color: #94a3b8; font-weight: normal; margin-left: 0.5rem; opacity: 0.8; user-select: none;">(拖曳標題移動)</span>
     </div>
     <div class="tooltip-desc">${desc}</div>
     ${eqText}
@@ -756,7 +778,7 @@ function showFFTooltip(e, ffText) {
   let tableHtml = "";
 
   if (ffType === "JK") {
-    desc = `特性方程式：Q(t+1) = J·Q' + K'·Q<br>激勵表如下：`;
+    desc = `Characteristic Equation: Q(t+1) = J·Q' + K'·Q<br>Excitation Table:`;
     tableHtml = `
       <table class="tooltip-table">
         <tr><th>Q → Q(t+1)</th><th>J</th><th>K</th></tr>
@@ -767,7 +789,7 @@ function showFFTooltip(e, ffText) {
       </table>
     `;
   } else if (ffType === "T") {
-    desc = `特性方程式：Q(t+1) = T ⊕ Q<br>當 T=1 時狀態翻轉，T=0 時狀態保持。`;
+    desc = `Characteristic Equation: Q(t+1) = T ⊕ Q<br>T=1: Toggle, T=0: Hold.`;
     tableHtml = `
       <table class="tooltip-table">
         <tr><th>Q → Q(t+1)</th><th>T</th></tr>
@@ -778,7 +800,7 @@ function showFFTooltip(e, ffText) {
       </table>
     `;
   } else if (ffType === "D") {
-    desc = `特性方程式：Q(t+1) = D<br>次一狀態完全等於當前 D 輸入的值。`;
+    desc = `Characteristic Equation: Q(t+1) = D<br>Next state is equal to the D input.`;
     tableHtml = `
       <table class="tooltip-table">
         <tr><th>Q → Q(t+1)</th><th>D</th></tr>
@@ -793,12 +815,51 @@ function showFFTooltip(e, ffText) {
   const content = `
     <div class="tooltip-title">
       <span>${title} (${ffText})</span>
+      <span style="font-size: 0.62rem; color: #94a3b8; font-weight: normal; margin-left: 0.5rem; opacity: 0.8; user-select: none;">(拖曳標題移動)</span>
     </div>
     <div class="tooltip-desc">${desc}</div>
     ${tableHtml}
   `;
   showTooltip(e, content);
 }
+
+// 懸浮窗拖曳事件監聽
+let isDraggingTooltip = false;
+let tooltipStartX = 0;
+let tooltipStartY = 0;
+
+tooltip.addEventListener("mousedown", (e) => {
+  const titleBar = e.target.closest(".tooltip-title");
+  if (!titleBar) return;
+  
+  isDraggingTooltip = true;
+  tooltipStartX = e.clientX - parseFloat(tooltip.style.left || 0);
+  tooltipStartY = e.clientY - parseFloat(tooltip.style.top || 0);
+  e.preventDefault();
+  e.stopPropagation();
+});
+
+document.addEventListener("mousemove", (e) => {
+  if (!isDraggingTooltip) return;
+  
+  const container = document.querySelector(".circuit-canvas-container");
+  const rect = container.getBoundingClientRect();
+  const tooltipRect = tooltip.getBoundingClientRect();
+  
+  let newLeft = e.clientX - tooltipStartX;
+  let newTop = e.clientY - tooltipStartY;
+  
+  // 限制拖曳範圍不超出畫布
+  newLeft = Math.max(5, Math.min(newLeft, rect.width - tooltipRect.width - 5));
+  newTop = Math.max(5, Math.min(newTop, rect.height - tooltipRect.height - 5));
+  
+  tooltip.style.left = `${newLeft}px`;
+  tooltip.style.top = `${newTop}px`;
+});
+
+document.addEventListener("mouseup", () => {
+  isDraggingTooltip = false;
+});
 
 // 監聽 SVG 中的點擊事件，進行事件代理
 circuitSvg.addEventListener("click", (e) => {
@@ -830,7 +891,7 @@ circuitSvg.addEventListener("click", (e) => {
 
 // 點擊網頁其他地方也隱藏懸浮窗
 document.addEventListener("click", (e) => {
-  if (!e.target.closest("#circuit-svg")) {
+  if (!e.target.closest("#circuit-svg") && !e.target.closest("#circuit-tooltip")) {
     tooltip.style.display = "none";
   }
 });

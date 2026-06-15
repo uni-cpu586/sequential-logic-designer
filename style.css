@@ -426,24 +426,24 @@ svg:active {
 
 /* 1. 垂直軌道導線與標籤 */
 .bus-rails line {
-  stroke: rgba(255, 255, 255, 0.12) !important; /* 灰白半透明線 */
+  stroke: rgba(255, 255, 255, 0.25) !important; /* 灰白半透明線 - 增加不可見度 */
   stroke-width: 1.2px !important;
 }
 
 .bus-rails text {
-  fill: #94a3b8 !important; /* 灰色軌道文字 */
+  fill: #cbd5e1 !important; /* 軌道文字改為更明亮的灰白色 */
   font-weight: 600 !important;
 }
 
 /* NOT 閘 (反相器) */
 .bus-rails path[data-type="NOT"] {
-  stroke: var(--accent-blue) !important;
+  stroke: #00f0ff !important; /* 亮電子藍/青色 (Bright Cyan) */
   stroke-width: 2px !important;
   fill: #080b11 !important;
 }
 
 .bus-rails circle {
-  stroke: var(--accent-blue) !important;
+  stroke: #00f0ff !important;
   stroke-width: 1.5px !important;
   fill: #080b11 !important;
 }
@@ -451,96 +451,98 @@ svg:active {
 /* 2. 正反器框本體與文字 (螢光綠霓虹) */
 .flip-flops rect {
   fill: #080b11 !important; /* 深黑底色 */
-  stroke: var(--accent-green) !important; /* 螢光綠外框 */
+  stroke: #00ff88 !important; /* 極亮螢光綠外框 */
   stroke-width: 2px !important;
-  filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.3)) !important; /* 綠光暈 */
+  filter: drop-shadow(0 0 6px rgba(0, 255, 136, 0.4)) !important; /* 更亮的綠光暈 */
 }
 
 .flip-flops text {
-  fill: #e2e8f0 !important; /* 亮灰白字 */
+  fill: #f8fafc !important; /* 亮白色字 */
   font-weight: 600 !important;
 }
 
 .flip-flops polygon {
-  stroke: var(--accent-green) !important;
+  stroke: #00ff88 !important;
   stroke-width: 2px !important;
 }
 
 /* 3. 時脈 (CLK) 信號線 */
 .clock-wires line,
 .clock-wires path {
-  stroke: #059669 !important; /* 暗螢光綠線 */
+  stroke: #00ff88 !important; /* 改為極亮螢光綠線，與反饋線一致且極亮 */
   stroke-width: 1.5px !important;
+  filter: drop-shadow(0 0 4px rgba(0, 255, 136, 0.3)) !important;
 }
 
 .clock-wires text {
-  fill: var(--accent-green) !important;
+  fill: #00ff88 !important;
   font-weight: bold !important;
-  text-shadow: 0 0 6px rgba(16, 185, 129, 0.3) !important;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.5) !important;
 }
 
 /* 4. 邏輯閘 (AND, OR) */
 .logic-gate {
   fill: #080b11 !important; /* 深黑底色 */
-  stroke: var(--accent-blue) !important; /* 霓虹藍 */
+  stroke: #00f0ff !important; /* 亮電子藍/青色 */
   stroke-width: 2px !important;
-  filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.3)) !important; /* 藍光暈 */
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.4)) !important; /* 藍光暈 */
   transition: stroke var(--transition-speed), filter var(--transition-speed);
 }
 
 .logic-gate[data-type="OR"] {
-  stroke: var(--accent-purple) !important; /* OR 閘給予霓虹紫 */
-  filter: drop-shadow(0 0 5px rgba(168, 85, 247, 0.3)) !important;
+  stroke: #e879f9 !important; /* OR 閘改用極亮的霓虹紫/粉紅 (Neon Orchid) */
+  filter: drop-shadow(0 0 6px rgba(232, 121, 249, 0.4)) !important;
 }
 
 /* 邏輯閘內部的 & 或 ≥1 文字 */
 #circuit-gates text {
-  fill: #60a5fa !important;
+  fill: #38bdf8 !important; /* 改用更亮的淡藍色 */
   font-weight: 700 !important;
 }
 
-/* 5. 電路連接線與點 (霓虹藍) */
+/* 5. 電路連接線與點 (亮電子藍/青色) */
 #circuit-wires path,
 #circuit-wires line {
-  stroke: var(--accent-blue) !important; /* 亮藍連接線 */
+  stroke: #00f0ff !important; /* 亮電子藍/青色連接線 */
   stroke-width: 1.8px !important;
   fill: none !important;
 }
 
-/* 反饋迴路線 (霓虹紫) */
+/* 反饋迴路線 (亮綠色，配合 🟢 綠色: 時脈與反饋線 標籤) */
 .feedback-loops path {
-  stroke: var(--accent-purple) !important; /* 螢光紫反饋線 */
+  stroke: #00ff88 !important; /* 改為螢光綠，符合圖例與 renderer.js */
   stroke-width: 1.8px !important;
+  filter: drop-shadow(0 0 4px rgba(0, 255, 136, 0.3)) !important;
 }
 
 /* 導線交叉點的圓點 */
 #circuit-wires circle,
 .bus-rails circle {
-  fill: var(--accent-blue) !important; /* 亮藍接線點 */
+  fill: #00f0ff !important; /* 亮電子藍接線點 */
   r: 3.5px !important;
 }
 
 .feedback-loops circle {
-  fill: var(--accent-purple) !important;
+  fill: #00ff88 !important; /* 改為螢光綠，符合圖例 */
   r: 3.5px !important;
 }
 
 /* 6. 輸出信號 Z (霓虹紅) */
 #circuit-wires path[stroke="#f43f5e"],
 #circuit-wires line[stroke="#f43f5e"] {
-  stroke: var(--accent-red) !important; /* 霓虹紅輸出線 */
+  stroke: #ff3366 !important; /* 極亮霓虹紅/粉紅輸出線 (Bright Neon Rose) */
   stroke-width: 2px !important;
-  filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.4)) !important;
+  filter: drop-shadow(0 0 8px rgba(255, 51, 102, 0.5)) !important;
 }
 
 #circuit-wires circle[fill="#f43f5e"] {
-  fill: var(--accent-red) !important;
+  fill: #ff3366 !important;
 }
 
 #circuit-wires text[fill="#f43f5e"] {
-  fill: var(--accent-red) !important;
+  fill: #ff3366 !important;
   font-weight: 700 !important;
-  text-shadow: 0 0 8px rgba(239, 68, 68, 0.5) !important;
+  text-shadow: 0 0 10px rgba(255, 51, 102, 0.6) !important;
 }
 
 /* --- 微觀滑鼠懸停雷射流動特效 (Cyberpunk 的靈魂) --- */

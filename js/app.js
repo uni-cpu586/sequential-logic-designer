@@ -296,7 +296,7 @@ function updateSolverAndCircuit() {
     kmapsDashboard.style.display = "none";
     if (toolbar) toolbar.style.display = "flex";
     if (legendTip) legendTip.style.display = "flex";
-    if (legendLabel) legendLabel.textContent = "綠色: 時脈與反饋線 | 藍色: 激勵輸入邏輯 | 紅色: 輸出 Z";
+    if (legendLabel) legendLabel.textContent = "🟢 綠色: 時脈與反饋線 | 🔵 藍色: 激勵輸入邏輯 | 🔴 紅色: 輸出 Z";
     
     renderCircuit(circuitSvg, solved, ffType);
     applyTransform();
@@ -306,7 +306,7 @@ function updateSolverAndCircuit() {
     kmapsDashboard.style.display = "none";
     if (toolbar) toolbar.style.display = "flex";
     if (legendTip) legendTip.style.display = "flex";
-    if (legendLabel) legendLabel.textContent = "藍色: X = 0 轉移 | 橘黃色: X = 1 轉移 | 綠色節點: 狀態";
+    if (legendLabel) legendLabel.textContent = "🔵 藍色: X = 0 轉移 | 🟡 橘黃色: X = 1 轉移 | 🟢 綠色節點: 狀態";
     
     renderStateDiagram(circuitSvg, solved, modelType, transitions, states, mooreOutputs);
     applyTransform(); // 狀態圖也支援縮放平移！
@@ -316,7 +316,7 @@ function updateSolverAndCircuit() {
     kmapsDashboard.style.display = "block";
     if (toolbar) toolbar.style.display = "none";
     if (legendTip) legendTip.style.display = "flex";
-    if (legendLabel) legendLabel.textContent = "藍色格網: 圈選主要隱含項 (Prime Implicants)";
+    if (legendLabel) legendLabel.textContent = "🔵 藍色格網: 圈選主要隱含項 (Prime Implicants)";
     
     renderAllKMapsDashboard(solved);
   }

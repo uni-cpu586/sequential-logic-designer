@@ -757,13 +757,24 @@ async function handleImageUpload(file) {
       throw new Error(errData.error?.message || `HTTP error ${response.status}`);
     }
 
-    const result = await response.json();
+    let result;
+    try {
+      result = await response.json();
+    } catch (err) {
+      throw new Error("伺服器回傳格式不正確（可能是舊的伺服器行程仍在執行，請重啟伺服器）。");
+    }
+
     const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) {
       throw new Error("Gemini 回傳內容為空，請確認圖片內容是否清晰。");
     }
 
-    const parsed = JSON.parse(text);
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch (err) {
+      throw new Error("AI 輸出的 JSON 格式有缺陷，請嘗試重新上傳或換張更清晰的照片。");
+    }
     
     // 驗證與更新狀態
     if (!parsed.modelType || !parsed.ffType || !parsed.states || !parsed.transitions) {

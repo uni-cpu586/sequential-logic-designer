@@ -36,7 +36,7 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
 
   // 定義畫布尺寸與佈局參數
   const width = 1000;
-  const height = 650;
+  const height = 300 + numFFs * 200; // 每個正反器增加 200px 高度，動態調整畫布大小 (1 FF: 500, 2 FFs: 700, 3 FFs: 900)
   svgContainer.setAttribute("viewBox", `0 0 ${width} ${height}`);
 
   // 建立主要分組以支援縮放與拖曳
@@ -96,7 +96,7 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
       x1: x,
       y1: 40,
       x2: x,
-      y2: 600,
+      y2: height - 50, // 動態延伸到畫布底部上方 50px
       stroke: isInput ? "#3b82f6" : "#10b981",
       "stroke-width": "2",
       "stroke-dasharray": name.includes("'") ? "2 2" : "none",
@@ -281,9 +281,10 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
   mainGroup.appendChild(clkGroup);
 
   const clkBusX = railStartX - 30;
+  const clkBusY = height - 80; // 動態放置在畫布底部上方 80px
   const clkLabel = createSVGElement("text", {
     x: clkBusX - 5,
-    y: 560,
+    y: clkBusY + 5,
     fill: "#10b981",
     "font-size": "12",
     "font-family": "sans-serif",
@@ -296,9 +297,9 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
   // CLK 主要匯流排
   const clkLine = createSVGElement("line", {
     x1: clkBusX,
-    y1: 555,
+    y1: clkBusY,
     x2: ffX - 25,
-    y2: 555,
+    y2: clkBusY,
     stroke: "#10b981",
     "stroke-width": "2",
     fill: "none"
@@ -322,7 +323,7 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
     x1: ffX - 25,
     y1: ffs[0].y + ffHeight - 25,
     x2: ffX - 25,
-    y2: 555,
+    y2: clkBusY,
     stroke: "#10b981",
     "stroke-width": "2"
   });
@@ -343,8 +344,11 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
       zones.push({ name: `${ffType}${i}`, yStart: 70 + i * 200, yEnd: 170 + i * 200, targetY: ffs[i].y + 40 });
     }
   }
-  // 最後一區是輸出 Z
-  zones.push({ name: "Z", yStart: 460, yEnd: 540, targetY: 500 });
+  // 最後一區是輸出 Z，放最底部的 Zone，避免重疊
+  const zYStart = height - 180;
+  const zYEnd = height - 100;
+  const zTargetY = (zYStart + zYEnd) / 2;
+  zones.push({ name: "Z", yStart: zYStart, yEnd: zYEnd, targetY: zTargetY });
 
   const gatesGroup = createSVGElement("g", { id: "circuit-gates" });
   mainGroup.appendChild(gatesGroup);
@@ -685,7 +689,7 @@ export function renderCircuit(svgContainer, solvedData, ffType) {
     const qPrimeOutX = ff.x + ffWidth;
     const qPrimeOutY = ff.y + 75;
     const qPrimeRailX = rails[`Q${ff.index}'`];
-    const qDownY = 600 - idx * 15; // 底部高度錯開
+    const qDownY = height - 130 - idx * 15; // 底部高度錯開，適應動態高度
 
     const qPrimePath = createSVGElement("path", {
       d: `M ${qPrimeOutX} ${qPrimeOutY} L ${qPrimeOutX + 15 + idx * 15} ${qPrimeOutY} L ${qPrimeOutX + 15 + idx * 15} ${qDownY} L ${qPrimeRailX} ${qDownY} L ${qPrimeRailX} ${qPrimeOutY}`,

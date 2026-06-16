@@ -271,10 +271,13 @@ function updateTabsList() {
 function updateSolverAndCircuit() {
   const solved = solveSequentialCircuit(modelType, ffType, states, transitions, mooreOutputs);
 
-  // 1. 更新卡諾圖 (K-Map) 顯示
+  // 1. 動態更新分頁標籤 (確保分頁按鈕數量隨正反器增減自動更新)
+  updateTabsList();
+
+  // 2. 更新卡諾圖 (K-Map) 顯示
   renderKMap(solved);
 
-  // 2. 更新方程式文字
+  // 3. 更新方程式文字
   const eq = solved.equations[activeTab];
   if (eq) {
     equationLabel.textContent = `${activeTab} =`;
@@ -363,7 +366,7 @@ function renderAllKMapsDashboard(solved) {
     labels.style.color = "var(--text-secondary)";
     labels.style.marginBottom = "0.35rem";
     if (numVars === 4) {
-      labels.textContent = "直: Q2Q1(00-10) | 橫: Q0X(00-10)";
+      labels.textContent = "直: Q0X(00-10) | 橫: Q2Q1(00-10)";
     } else if (numVars === 3) {
       labels.textContent = "直: Q1Q0(00-10) | 橫: X(0-1)";
     } else {
@@ -384,7 +387,7 @@ function renderAllKMapsDashboard(solved) {
       const grayCodeCols = [0, 1, 3, 2];
       grayCodeRows.forEach(rowVal => {
         grayCodeCols.forEach(colVal => {
-          const cellIndex = (rowVal << 2) | colVal;
+          const cellIndex = (colVal << 2) | rowVal;
           const cellValue = mapData.table[cellIndex];
           const cell = createCellDOM(cellIndex, cellValue, eq, numVars);
           gridContainer.appendChild(cell);
@@ -466,8 +469,8 @@ function renderKMap(solved) {
   const kmapColLabel = document.getElementById("kmap-col-label");
   if (kmapRowLabel && kmapColLabel) {
     if (numVars === 4) {
-      kmapRowLabel.textContent = "直軸: Q2 Q1 (00, 01, 11, 10)";
-      kmapColLabel.textContent = "橫軸: Q0 X (00, 01, 11, 10)";
+      kmapRowLabel.textContent = "直軸: Q0 X (00, 01, 11, 10)";
+      kmapColLabel.textContent = "橫軸: Q2 Q1 (00, 01, 11, 10)";
     } else if (numVars === 3) {
       kmapRowLabel.textContent = "直軸: Q1 Q0 (00, 01, 11, 10)";
       kmapColLabel.textContent = "橫軸: X (0, 1)";
@@ -479,13 +482,13 @@ function renderKMap(solved) {
 
   // 根據變數數量渲染不同大小與排序的卡諾圖
   if (numVars === 4) {
-    // 4 變數卡諾圖 (Q2 Q1 X Q0) - 4x4 格網
-    const grayCodeRows = [0, 1, 3, 2]; // Q2 Q1
-    const grayCodeCols = [0, 1, 3, 2]; // Q0 X
+    // 4 變數卡諾圖 - 4x4 格網 (直軸 Q0 X, 橫軸 Q2 Q1 對調)
+    const grayCodeRows = [0, 1, 3, 2]; // Q0 X
+    const grayCodeCols = [0, 1, 3, 2]; // Q2 Q1
 
     grayCodeRows.forEach(rowVal => {
       grayCodeCols.forEach(colVal => {
-        const cellIndex = (rowVal << 2) | colVal;
+        const cellIndex = (colVal << 2) | rowVal;
         const cellValue = mapData.table[cellIndex];
 
         const cell = document.createElement("div");

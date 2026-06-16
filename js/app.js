@@ -7,7 +7,7 @@ let states = ["A", "B", "C"];
 let modelType = "Mealy";
 let ffType = "JK";
 let activeTab = "J1";
-let currentView = "circuit"; // "circuit" | "state-diag" | "kmap-all"
+let currentView = "kmap-all"; // "kmap-all" | "state-diag" | "truth-table" | "circuit"
 
 // Moore 狀態輸出預設值
 let mooreOutputs = {
@@ -285,10 +285,11 @@ function updateSolverAndCircuit() {
     equationExpression.textContent = eq.algebraic.replace(/\*/g, " · ");
   }
 
-  // 3. 根據選中視圖進行渲染
+  // 4. 根據選中視圖進行渲染
   const mainTitle = document.getElementById("main-panel-title");
   const circuitSvg = document.getElementById("circuit-svg");
   const kmapsDashboard = document.getElementById("kmaps-dashboard");
+  const truthTableDashboard = document.getElementById("truth-table-dashboard");
   const toolbar = document.getElementById("circuit-toolbar-btns");
   const legendLabel = document.getElementById("legend-text-label");
   const legendTip = document.getElementById("circuit-legend-tip");
@@ -298,6 +299,7 @@ function updateSolverAndCircuit() {
     mainTitle.textContent = "4. 動態邏輯電路圖";
     circuitSvg.style.display = "block";
     kmapsDashboard.style.display = "none";
+    if (truthTableDashboard) truthTableDashboard.style.display = "none";
     if (toolbar) toolbar.style.display = "flex";
     if (legendTip) legendTip.style.display = "flex";
     if (legendLabel) legendLabel.textContent = "🟢 綠色: 時脈與反饋線 | 🔵 藍色: 激勵輸入邏輯 | 🔴 紅色: 輸出 Z";
@@ -309,6 +311,7 @@ function updateSolverAndCircuit() {
     mainTitle.textContent = "4. State Diagram";
     circuitSvg.style.display = "block";
     kmapsDashboard.style.display = "none";
+    if (truthTableDashboard) truthTableDashboard.style.display = "none";
     if (toolbar) toolbar.style.display = "flex";
     if (legendTip) legendTip.style.display = "flex";
     if (legendLabel) legendLabel.textContent = "🔵 藍色: X = 0 轉移 | 🟡 橘黃色: X = 1 轉移 | 🟢 綠色節點: 狀態";
@@ -320,12 +323,24 @@ function updateSolverAndCircuit() {
     mainTitle.textContent = "4. K-Maps";
     circuitSvg.style.display = "none";
     kmapsDashboard.style.display = "block";
+    if (truthTableDashboard) truthTableDashboard.style.display = "none";
     if (toolbar) toolbar.style.display = "none";
     if (legendTip) legendTip.style.display = "flex";
     if (legendLabel) legendLabel.textContent = "🔵 藍色格網: 圈選主要隱含項 (Prime Implicants)";
     if (legendHint) legendHint.style.display = "none";
     
     renderAllKMapsDashboard(solved);
+  } else if (currentView === "truth-table") {
+    mainTitle.textContent = "4. Truth Table";
+    circuitSvg.style.display = "none";
+    kmapsDashboard.style.display = "none";
+    if (truthTableDashboard) truthTableDashboard.style.display = "block";
+    if (toolbar) toolbar.style.display = "none";
+    if (legendTip) legendTip.style.display = "flex";
+    if (legendLabel) legendLabel.textContent = "🟢 綠色: 目前狀態 | 🟡 黃色: 次一狀態 | 🔵 藍色: 激勵變數 | 🔴 紅色: 輸出 Z";
+    if (legendHint) legendHint.style.display = "none";
+    
+    renderTruthTable(solved);
   }
 }
 
@@ -408,6 +423,214 @@ function renderAllKMapsDashboard(solved) {
 
     grid.appendChild(card);
   });
+}
+
+/**
+ * 渲染狀態轉移與激勵真值表 (State Transition & Excitation Truth Table)
+ */
+function renderTruthTable(solved) {
+  const container = document.getElementById("truth-table-dashboard");
+  if (!container) return;
+  container.innerHTML = "";
+
+  const numFFs = solved.numFFs;
+  const numVars = numFFs + 1; // FFs + input X
+
+  const card = document.createElement("div");
+  card.className = "truth-table-card";
+  container.appendChild(card);
+
+  const title = document.createElement("div");
+  title.className = "truth-table-title";
+  title.textContent = "狀態轉移與激勵真值表 (State Transition & Excitation Truth Table)";
+  card.appendChild(title);
+
+  const tableContainer = document.createElement("div");
+  tableContainer.className = "truth-table-wrapper";
+  card.appendChild(tableContainer);
+
+  const table = document.createElement("table");
+  table.className = "cyber-truth-table";
+  tableContainer.appendChild(table);
+
+  const thead = document.createElement("thead");
+  table.appendChild(thead);
+
+  const tr1 = document.createElement("tr");
+  thead.appendChild(tr1);
+
+  // 第一行表頭：分類大標題
+  const thPresent = document.createElement("th");
+  thPresent.setAttribute("colspan", numFFs + 1);
+  thPresent.textContent = "Present State";
+  tr1.appendChild(thPresent);
+
+  const thInput = document.createElement("th");
+  thInput.textContent = "Input";
+  tr1.appendChild(thInput);
+
+  const thNext = document.createElement("th");
+  thNext.setAttribute("colspan", numFFs + 1);
+  thNext.textContent = "Next State";
+  tr1.appendChild(thNext);
+
+  const excitationVars = [];
+  if (ffType === "JK") {
+    for (let i = numFFs - 1; i >= 0; i--) {
+      excitationVars.push(`J${i}`, `K${i}`);
+    }
+  } else {
+    for (let i = numFFs - 1; i >= 0; i--) {
+      excitationVars.push(`${ffType}${i}`);
+    }
+  }
+
+  const thExcitation = document.createElement("th");
+  thExcitation.setAttribute("colspan", excitationVars.length);
+  thExcitation.textContent = `Excitation Inputs (${ffType} 正反器輸入)`;
+  tr1.appendChild(thExcitation);
+
+  const thOutput = document.createElement("th");
+  thOutput.textContent = "Output";
+  tr1.appendChild(thOutput);
+
+  // 第二行表頭：具體變數名稱
+  const tr2 = document.createElement("tr");
+  thead.appendChild(tr2);
+
+  // 目前狀態變數
+  for (let i = numFFs - 1; i >= 0; i--) {
+    const th = document.createElement("th");
+    th.textContent = `Q${i}`;
+    tr2.appendChild(th);
+  }
+  const thStateName = document.createElement("th");
+  thStateName.textContent = "State";
+  thStateName.style.color = "var(--accent-green)";
+  tr2.appendChild(thStateName);
+
+  // 輸入 X
+  const thX = document.createElement("th");
+  thX.textContent = "X";
+  tr2.appendChild(thX);
+
+  // 次一狀態變數
+  for (let i = numFFs - 1; i >= 0; i--) {
+    const th = document.createElement("th");
+    th.textContent = `Q${i}+`;
+    tr2.appendChild(th);
+  }
+  const thNextStateName = document.createElement("th");
+  thNextStateName.textContent = "Next";
+  thNextStateName.style.color = "var(--accent-yellow)";
+  tr2.appendChild(thNextStateName);
+
+  // 激勵變數
+  excitationVars.forEach(v => {
+    const th = document.createElement("th");
+    th.textContent = v;
+    th.style.color = "var(--accent-blue)";
+    tr2.appendChild(th);
+  });
+
+  // 輸出 Z
+  const thZ = document.createElement("th");
+  thZ.textContent = "Z";
+  thZ.style.color = "var(--accent-red)";
+  tr2.appendChild(thZ);
+
+  // 表身
+  const tbody = document.createElement("tbody");
+  table.appendChild(tbody);
+
+  const totalRows = 1 << numVars;
+  for (let val = 0; val < totalRows; val++) {
+    const x = val & 1;
+    const currentStateVal = val >> 1;
+
+    // 尋找目前狀態名稱，若不存在（未使用狀態）則跳過不顯示
+    const currentStateName = states.find((s, idx) => idx === currentStateVal);
+    if (!currentStateName) {
+      continue;
+    }
+
+    const tr = document.createElement("tr");
+    tbody.appendChild(tr);
+
+    // 目前狀態二進位
+    for (let i = numFFs - 1; i >= 0; i--) {
+      const td = document.createElement("td");
+      td.textContent = (currentStateVal >> i) & 1;
+      tr.appendChild(td);
+    }
+
+    // 目前狀態名稱
+    const tdStateName = document.createElement("td");
+    tdStateName.textContent = currentStateName;
+    tdStateName.style.color = "var(--accent-green)";
+    tdStateName.style.fontWeight = "bold";
+    tr.appendChild(tdStateName);
+
+    // 輸入 X
+    const tdX = document.createElement("td");
+    tdX.textContent = x;
+    tr.appendChild(tdX);
+
+    // 尋找轉移
+    const trans = transitions.find(t => t.presentState === currentStateName && t.x === x);
+    if (trans) {
+      const nextStateName = trans.nextState;
+      const nextStateVal = solved.stateEncoding[nextStateName];
+
+      for (let i = numFFs - 1; i >= 0; i--) {
+        const td = document.createElement("td");
+        td.textContent = nextStateVal !== undefined ? ((nextStateVal >> i) & 1) : "X";
+        tr.appendChild(td);
+      }
+
+      const tdNextStateName = document.createElement("td");
+      tdNextStateName.textContent = nextStateName;
+      tdNextStateName.style.color = "var(--accent-yellow)";
+      tdNextStateName.style.fontWeight = "bold";
+      tr.appendChild(tdNextStateName);
+    } else {
+      for (let i = numFFs - 1; i >= 0; i--) {
+        const td = document.createElement("td");
+        td.textContent = "X";
+        tr.appendChild(td);
+      }
+      const tdNextStateName = document.createElement("td");
+      tdNextStateName.textContent = "-";
+      tr.appendChild(tdNextStateName);
+    }
+
+    // 激勵變數
+    excitationVars.forEach(v => {
+      const td = document.createElement("td");
+      const mapData = solved.kMaps[v];
+      const cellValue = mapData ? mapData.table[val] : "X";
+      td.textContent = cellValue;
+      if (cellValue === "X" || cellValue === "x") {
+        td.style.color = "#64748b";
+      } else {
+        td.style.color = "var(--accent-blue)";
+        td.style.fontWeight = "bold";
+      }
+      tr.appendChild(td);
+    });
+
+    // 輸出 Z
+    const tdZ = document.createElement("td");
+    const zValue = solved.kMaps["Z"] ? solved.kMaps["Z"].table[val] : "X";
+    tdZ.textContent = zValue;
+    if (zValue === "X" || zValue === "x") {
+      tdZ.style.color = "#64748b";
+    } else {
+      tdZ.style.color = "var(--accent-red)";
+      tdZ.style.fontWeight = "bold";
+    }
+    tr.appendChild(tdZ);
+  }
 }
 
 function createCellDOM(cellIndex, cellValue, eq, numVars) {
@@ -576,11 +799,23 @@ function renderKMap(solved) {
 
 // --- SVG 縮放、拖曳與下載事件 ---
 
+function updateZoomControls() {
+  const slider = document.getElementById("zoom-slider");
+  const valueDisplay = document.getElementById("zoom-value");
+  if (slider) {
+    slider.value = Math.round(scale * 100);
+  }
+  if (valueDisplay) {
+    valueDisplay.textContent = `${Math.round(scale * 100)}%`;
+  }
+}
+
 function applyTransform() {
   const g = document.getElementById("circuit-main-group");
   if (g) {
     g.setAttribute("transform", `translate(${panX}, ${panY}) scale(${scale})`);
   }
+  updateZoomControls();
 }
 
 circuitSvg.addEventListener("mousedown", (e) => {
@@ -602,7 +837,7 @@ circuitSvg.addEventListener("mousemove", (e) => {
 
 circuitSvg.addEventListener("wheel", (e) => {
   e.preventDefault();
-  const zoomFactor = 1.1;
+  const zoomFactor = 1.05; // 降低縮放靈敏度，避免忽大忽小
   if (e.deltaY < 0) {
     scale = Math.min(scale * zoomFactor, 3);
   } else {
@@ -611,14 +846,22 @@ circuitSvg.addEventListener("wheel", (e) => {
   applyTransform();
 });
 
-// 工具列按鈕
+// 工具列與縮放滑動條事件監聽
+const zoomSlider = document.getElementById("zoom-slider");
+if (zoomSlider) {
+  zoomSlider.addEventListener("input", (e) => {
+    scale = parseInt(e.target.value) / 100;
+    applyTransform();
+  });
+}
+
 document.getElementById("btn-zoom-in").addEventListener("click", () => {
-  scale = Math.min(scale * 1.2, 3);
+  scale = Math.min(scale * 1.1, 3); // 減緩步進
   applyTransform();
 });
 
 document.getElementById("btn-zoom-out").addEventListener("click", () => {
-  scale = Math.max(scale / 1.2, 0.3);
+  scale = Math.max(scale / 1.1, 0.3);
   applyTransform();
 });
 

@@ -975,3 +975,69 @@ svg text {
   color: #64748b;
   display: block;
 }
+
+/* --- 狀態轉移與激勵真值表儀表板樣式 --- */
+.truth-table-card {
+  background: rgba(10, 15, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  height: 100%;
+}
+
+.truth-table-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #38bdf8;
+  margin-bottom: 0.75rem;
+  border-bottom: 1.5px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0.5rem;
+  text-shadow: 0 0 6px rgba(56, 189, 248, 0.3);
+}
+
+.truth-table-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.cyber-truth-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+  font-size: 0.82rem;
+}
+
+.cyber-truth-table th,
+.cyber-truth-table td {
+  padding: 0.5rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.cyber-truth-table th {
+  background: rgba(10, 15, 26, 0.8);
+  color: #cbd5e1;
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.cyber-truth-table tbody tr {
+  transition: background-color var(--transition-speed);
+}
+
+.cyber-truth-table tbody tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.cyber-truth-table td {
+  color: #f1f5f9;
+  font-family: 'Fira Code', monospace;
+}
